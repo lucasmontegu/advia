@@ -1,0 +1,34 @@
+{
+  "name": "advia",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "check-types": "turbo check-types",
+    "dev:native": "turbo -F native dev",
+    "dev:web": "turbo -F web dev",
+    "db:push": "turbo -F @advia/db db:push",
+    "db:studio": "turbo -F @advia/db db:studio",
+    "db:generate": "turbo -F @advia/db db:generate",
+    "db:migrate": "turbo -F @advia/db db:migrate",
+    "check": "biome check --write ."
+  },
+  "dependencies": {
+    "@advia/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@advia/config": "workspace:*",
+    "@biomejs/biome": "^2.2.0",
+    "@types/node": "^22.13.14",
+    "turbo": "^2.6.3",
+    "typescript": "catalog:"
+  },
+  "packageManager": "pnpm@10.2.1"
+}

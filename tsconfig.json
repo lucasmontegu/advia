@@ -1,0 +1,3 @@
+{
+  "extends": "@advia/config/tsconfig.base.json"
+}

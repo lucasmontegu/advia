@@ -1,0 +1,27 @@
+{
+  "name": "@advia/auth",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@advia/db": "workspace:*",
+    "@advia/env": "workspace:*",
+    "@better-auth/expo": "catalog:",
+    "@polar-sh/better-auth": "catalog:",
+    "@polar-sh/sdk": "^0.42.2",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@advia/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}
