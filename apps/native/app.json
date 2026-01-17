@@ -8,7 +8,41 @@
     },
     "name": "advia",
     "slug": "advia",
-    "plugins": ["expo-font"],
+    "plugins": [
+      "expo-font",
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsDownloadToken": "sk.placeholder"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Advia necesita tu ubicación para mostrarte alertas de clima cercanas y guiarte a refugios seguros.",
+          "locationWhenInUsePermission": "Advia necesita tu ubicación para mostrarte alertas de clima cercanas.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ]
+    ],
+    "ios": {
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Advia necesita tu ubicación para mostrarte alertas de clima cercanas.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Advia necesita tu ubicación para mostrarte alertas de clima cercanas y guiarte a refugios seguros.",
+        "NSLocationAlwaysUsageDescription": "Advia necesita tu ubicación en segundo plano para alertarte sobre clima peligroso mientras conduces.",
+        "UIBackgroundModes": ["location", "fetch"]
+      }
+    },
+    "android": {
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION"
+      ]
+    },
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
