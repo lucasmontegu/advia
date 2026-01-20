@@ -28,7 +28,7 @@ export function useUpdateSettings() {
 
 export function useActiveAlerts(latitude: number, longitude: number, enabled = true) {
   return useQuery({
-    ...api.alerts.getActive.queryOptions({ latitude, longitude }),
+    ...api.alerts.getActive.queryOptions({ input: { latitude, longitude } }),
     enabled: enabled && latitude !== 0 && longitude !== 0,
     refetchInterval: 1000 * 60 * 5, // Refetch every 5 minutes
   });
@@ -194,8 +194,8 @@ export function useSendChatMessage() {
       location?: ChatLocation;
       onChunk?: (chunk: string) => void;
     }) => {
-      // For streaming, we need to use the iterator returned by the handler
-      const stream = api.chat.sendMessage.call({
+      // For streaming, we need to await the generator first
+      const stream = await api.chat.sendMessage.call({
         message: params.message,
         history: params.history,
         location: params.location,
@@ -203,7 +203,7 @@ export function useSendChatMessage() {
 
       let fullContent = '';
 
-      for await (const chunk of stream as AsyncIterable<{ type: 'text' | 'done'; content?: string }>) {
+      for await (const chunk of stream) {
         if (chunk.type === 'text' && chunk.content) {
           fullContent += chunk.content;
           params.onChunk?.(fullContent);
