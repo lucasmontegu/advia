@@ -1,5 +1,5 @@
 // apps/native/app/(app)/(tabs)/profile.tsx
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, Pressable, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useThemeColors } from '@/hooks/use-theme-colors';
@@ -7,12 +7,7 @@ import { useTrialStore } from '@/stores/trial-store';
 import { authClient } from '@/lib/auth-client';
 import { Icon, type IconName } from '@/components/icons';
 import { useTranslation } from '@/lib/i18n';
-
-type StatItem = {
-  icon: IconName;
-  labelKey: string;
-  value: string | number;
-};
+import { useUserProfile, useUserStats } from '@/hooks/use-api';
 
 type SettingItem = {
   icon: IconName;
@@ -28,19 +23,16 @@ export default function ProfileScreen() {
   const { isPremium, getRemainingDays } = useTrialStore();
   const remainingDays = getRemainingDays();
 
-  // TODO: Replace with real data from API
-  const stats: StatItem[] = [
-    { icon: 'storm', labelKey: 'profile.stormsAvoided', value: 12 },
-    { icon: 'money', labelKey: 'profile.moneySaved', value: '2,400' },
-    { icon: 'road', labelKey: 'profile.kmTraveled', value: 847 },
-  ];
+  // Fetch real data from API
+  const { data: profile, isLoading: profileLoading } = useUserProfile();
+  const { data: stats, isLoading: statsLoading } = useUserStats();
 
   const settings: SettingItem[] = [
-    { icon: 'notification', labelKey: 'profile.notifications', route: '/notifications' },
-    { icon: 'location', labelKey: 'profile.savedLocations', route: '/locations' },
+    { icon: 'notification', labelKey: 'profile.notifications', route: '/(app)/notifications' },
+    { icon: 'location', labelKey: 'profile.savedLocations', route: '/(app)/locations' },
     { icon: 'theme', labelKey: 'profile.theme', route: null, valueKey: 'profile.themeAuto' },
     { icon: 'language', labelKey: 'profile.language', route: null, valueKey: 'profile.languageSpanish' },
-    { icon: 'help', labelKey: 'profile.help', route: '/help' },
+    { icon: 'help', labelKey: 'profile.help', route: '/(app)/help' },
   ];
 
   const handleLogout = async () => {
@@ -51,6 +43,31 @@ export default function ProfileScreen() {
   const handleUpgrade = () => {
     router.push('/(app)/premium');
   };
+
+  const handleSettingPress = (route: string | null) => {
+    if (route) {
+      router.push(route as any);
+    }
+  };
+
+  // Format stats for display
+  const formattedStats = [
+    {
+      icon: 'storm' as IconName,
+      labelKey: 'profile.stormsAvoided',
+      value: stats?.stormsAvoided ?? 0,
+    },
+    {
+      icon: 'money' as IconName,
+      labelKey: 'profile.moneySaved',
+      value: stats?.moneySaved?.toLocaleString() ?? '0',
+    },
+    {
+      icon: 'road' as IconName,
+      labelKey: 'profile.kmTraveled',
+      value: stats?.kmTraveled ?? 0,
+    },
+  ];
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
@@ -92,26 +109,32 @@ export default function ProfileScreen() {
               <Icon name="user" size={24} color={colors.primaryForeground} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  fontFamily: 'NunitoSans_600SemiBold',
-                  color: colors.foreground,
-                  fontSize: 16,
-                }}
-              >
-                usuario@email.com
-              </Text>
-              <Text
-                style={{
-                  fontFamily: 'NunitoSans_400Regular',
-                  color: isPremium ? colors.primary : colors.mutedForeground,
-                  fontSize: 14,
-                }}
-              >
-                {isPremium
-                  ? t('profile.planPremium')
-                  : t('profile.trialRemaining', { days: remainingDays })}
-              </Text>
+              {profileLoading ? (
+                <ActivityIndicator size="small" color={colors.mutedForeground} />
+              ) : (
+                <>
+                  <Text
+                    style={{
+                      fontFamily: 'NunitoSans_600SemiBold',
+                      color: colors.foreground,
+                      fontSize: 16,
+                    }}
+                  >
+                    {profile?.email ?? t('common.loading')}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: 'NunitoSans_400Regular',
+                      color: isPremium ? colors.primary : colors.mutedForeground,
+                      fontSize: 14,
+                    }}
+                  >
+                    {isPremium
+                      ? t('profile.planPremium')
+                      : t('profile.trialRemaining', { days: remainingDays })}
+                  </Text>
+                </>
+              )}
             </View>
             {!isPremium && (
               <Pressable onPress={handleUpgrade}>
@@ -147,19 +170,23 @@ export default function ProfileScreen() {
             gap: 12,
           }}
         >
-          {stats.map((stat, index) => (
-            <View key={index} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <Icon name={stat.icon} size={20} color={colors.primary} />
-              <Text
-                style={{
-                  fontFamily: 'NunitoSans_400Regular',
-                  color: colors.foreground,
-                }}
-              >
-                {t(stat.labelKey, { count: Number(stat.value), amount: stat.value, km: stat.value })}
-              </Text>
-            </View>
-          ))}
+          {statsLoading ? (
+            <ActivityIndicator size="small" color={colors.mutedForeground} />
+          ) : (
+            formattedStats.map((stat, index) => (
+              <View key={index} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Icon name={stat.icon} size={20} color={colors.primary} />
+                <Text
+                  style={{
+                    fontFamily: 'NunitoSans_400Regular',
+                    color: colors.foreground,
+                  }}
+                >
+                  {t(stat.labelKey, { count: Number(stat.value), amount: stat.value, km: stat.value })}
+                </Text>
+              </View>
+            ))
+          )}
         </View>
 
         {/* Settings */}
@@ -187,6 +214,7 @@ export default function ProfileScreen() {
           {settings.map((setting, index) => (
             <Pressable
               key={index}
+              onPress={() => handleSettingPress(setting.route)}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
