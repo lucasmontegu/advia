@@ -156,7 +156,7 @@ export default function ProfileScreen() {
                   color: colors.foreground,
                 }}
               >
-                {t(stat.labelKey, { count: stat.value, amount: stat.value, km: stat.value })}
+                {t(stat.labelKey, { count: Number(stat.value), amount: stat.value, km: stat.value })}
               </Text>
             </View>
           ))}
