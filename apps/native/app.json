@@ -26,8 +26,14 @@
         "NSLocationWhenInUseUsageDescription": "Advia necesita tu ubicación para mostrarte alertas de clima cercanas.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "Advia necesita tu ubicación para mostrarte alertas de clima cercanas y guiarte a refugios seguros.",
         "NSLocationAlwaysUsageDescription": "Advia necesita tu ubicación en segundo plano para alertarte sobre clima peligroso mientras conduces.",
-        "UIBackgroundModes": ["location", "fetch"]
-      }
+        "UIBackgroundModes": [
+          "location",
+          "fetch",
+          "location",
+          "fetch"
+        ]
+      },
+      "bundleIdentifier": "com.anonymous.advia"
     },
     "android": {
       "permissions": [
@@ -35,12 +41,24 @@
         "ACCESS_COARSE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION",
         "FOREGROUND_SERVICE",
-        "FOREGROUND_SERVICE_LOCATION"
-      ]
+        "FOREGROUND_SERVICE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION"
+      ],
+      "package": "com.anonymous.advia"
     },
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "48f6b9da-d103-4b4a-9830-90bfc8025098"
+      }
+    },
+    "owner": "lmontegu"
   }
 }

@@ -41,7 +41,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: google("gemini-2.5-flash-preview-05-20"),
+    model: google("gemini-2.0-flash"),
     system: `Eres Advia, un asistente de alertas meteorológicas. Tu objetivo es mantener a los usuarios seguros informándoles sobre condiciones climáticas peligrosas.
 
 Capacidades:
@@ -189,5 +189,5 @@ Formato:
     },
   });
 
-  return result.toTextStreamResponse();
+  return result.toUIMessageStreamResponse();
 }

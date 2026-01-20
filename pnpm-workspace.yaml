@@ -8,3 +8,9 @@ catalog:
   better-auth: ^1.4.9
   "@polar-sh/better-auth": ^1.6.4
   "@better-auth/expo": ^1.4.9
+  "@orpc/client": ^1.13.4
+  "@orpc/tanstack-query": ^1.13.4
+  "@orpc/server": ^1.13.4
+  "@orpc/zod": ^1.13.4
+  "@orpc/openapi": ^1.13.4
+  next: ^16.1.1
