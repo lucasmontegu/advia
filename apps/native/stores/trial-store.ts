@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const TRIAL_DURATION_DAYS = 7;
+const TRIAL_DURATION_DAYS = 3;
 
 interface TrialState {
   trialStartDate: string | null;
