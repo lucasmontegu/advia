@@ -45,6 +45,13 @@ export default function AppLayout() {
           presentation: 'card',
         }}
       />
+      <Stack.Screen
+        name="login-incentive"
+        options={{
+          presentation: 'modal',
+          animation: 'slide_from_bottom',
+        }}
+      />
     </Stack>
   );
 }
