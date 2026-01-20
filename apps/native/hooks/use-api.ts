@@ -89,3 +89,44 @@ export function useSetPrimaryLocation() {
     },
   });
 }
+
+// ============ Chat Hooks ============
+
+type ChatMessage = {
+  role: 'user' | 'assistant';
+  content: string;
+};
+
+type ChatLocation = {
+  latitude: number;
+  longitude: number;
+};
+
+export function useSendChatMessage() {
+  return useMutation({
+    mutationFn: async (params: {
+      message: string;
+      history?: ChatMessage[];
+      location?: ChatLocation;
+      onChunk?: (chunk: string) => void;
+    }) => {
+      // For streaming, we need to use the iterator returned by the handler
+      const stream = api.chat.sendMessage.call({
+        message: params.message,
+        history: params.history,
+        location: params.location,
+      });
+
+      let fullContent = '';
+
+      for await (const chunk of stream as AsyncIterable<{ type: 'text' | 'done'; content?: string }>) {
+        if (chunk.type === 'text' && chunk.content) {
+          fullContent += chunk.content;
+          params.onChunk?.(fullContent);
+        }
+      }
+
+      return fullContent;
+    },
+  });
+}

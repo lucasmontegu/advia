@@ -4,6 +4,7 @@ import { protectedProcedure, publicProcedure } from "../index";
 import { userRouter } from './user';
 import { locationsRouter } from './locations';
 import { alertsRouter } from './alerts';
+import { chatRouter } from './chat';
 
 export const appRouter = {
   healthCheck: publicProcedure.handler(() => {
@@ -18,6 +19,7 @@ export const appRouter = {
   user: userRouter,
   locations: locationsRouter,
   alerts: alertsRouter,
+  chat: chatRouter,
 };
 export type AppRouter = typeof appRouter;
 export type AppRouterClient = RouterClient<typeof appRouter>;

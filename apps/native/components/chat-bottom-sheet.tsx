@@ -1,14 +1,12 @@
 // apps/native/components/chat-bottom-sheet.tsx
-import { useMemo, useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable, FlatList } from 'react-native';
+import { useMemo, useRef, useState, useCallback } from 'react';
+import { View, Text, TextInput, Pressable, FlatList, ActivityIndicator } from 'react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useThemeColors } from '@/hooks/use-theme-colors';
-
-const QUICK_SUGGESTIONS = [
-  'Mi ruta al trabajo',
-  'Alertas cercanas',
-  '¿Va a llover hoy?',
-];
+import { useTranslation } from '@/lib/i18n';
+import { useLocation } from '@/hooks/use-location';
+import { useSendChatMessage } from '@/hooks/use-api';
+import { Icon } from '@/components/icons';
 
 interface ChatMessage {
   id: string;
@@ -18,46 +16,94 @@ interface ChatMessage {
 
 export function ChatBottomSheet() {
   const colors = useThemeColors();
+  const { t } = useTranslation();
+  const { location } = useLocation();
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const flatListRef = useRef<FlatList>(null);
   const snapPoints = useMemo(() => ['15%', '50%', '80%'], []);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [streamingContent, setStreamingContent] = useState('');
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const sendMessage = useSendChatMessage();
+
+  const quickSuggestions = [
+    t('map.suggestions.workRoute'),
+    t('map.suggestions.nearbyAlerts'),
+    t('map.suggestions.willItRain'),
+  ];
+
+  const handleSend = useCallback(async () => {
+    const trimmedInput = input.trim();
+    if (!trimmedInput || sendMessage.isPending) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      content: input.trim(),
+      content: trimmedInput,
     };
 
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
-    setIsLoading(true);
+    setStreamingContent('');
+
+    // Expand bottom sheet when sending
+    bottomSheetRef.current?.snapToIndex(1);
 
     try {
-      // TODO: Integrate with actual AI chat API
-      // For now, simulate a response
-      setTimeout(() => {
-        const assistantMessage: ChatMessage = {
-          id: (Date.now() + 1).toString(),
-          role: 'assistant',
-          content: 'Esta funcionalidad estará disponible pronto. Por ahora puedes ver el mapa y las alertas.',
-        };
-        setMessages((prev) => [...prev, assistantMessage]);
-        setIsLoading(false);
-      }, 1000);
-    } catch (error) {
-      setIsLoading(false);
-    }
-  };
+      const history = messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+      }));
 
-  const handleSuggestion = (suggestion: string) => {
+      const response = await sendMessage.mutateAsync({
+        message: trimmedInput,
+        history,
+        location: location ? { latitude: location.latitude, longitude: location.longitude } : undefined,
+        onChunk: (chunk) => {
+          setStreamingContent(chunk);
+        },
+      });
+
+      // Replace streaming content with final message
+      setStreamingContent('');
+      const assistantMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: response,
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      setStreamingContent('');
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: t('chat.comingSoon'),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    }
+  }, [input, messages, location, sendMessage, t]);
+
+  const handleSuggestion = useCallback((suggestion: string) => {
     setInput(suggestion);
-  };
+  }, []);
+
+  // Combine messages with streaming content for display
+  const displayMessages = useMemo(() => {
+    if (streamingContent && sendMessage.isPending) {
+      return [
+        ...messages,
+        {
+          id: 'streaming',
+          role: 'assistant' as const,
+          content: streamingContent,
+        },
+      ];
+    }
+    return messages;
+  }, [messages, streamingContent, sendMessage.isPending]);
 
   return (
     <BottomSheet
@@ -69,10 +115,12 @@ export function ChatBottomSheet() {
     >
       <BottomSheetView style={{ flex: 1, paddingHorizontal: 16 }}>
         {/* Chat messages */}
-        {messages.length > 0 && (
+        {displayMessages.length > 0 && (
           <FlatList
-            data={messages}
+            ref={flatListRef}
+            data={displayMessages}
             keyExtractor={(item) => item.id}
+            onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
             renderItem={({ item }) => (
               <View
                 style={{
@@ -92,6 +140,9 @@ export function ChatBottomSheet() {
                   }}
                 >
                   {item.content}
+                  {item.id === 'streaming' && (
+                    <Text style={{ opacity: 0.5 }}>▊</Text>
+                  )}
                 </Text>
               </View>
             )}
@@ -100,7 +151,7 @@ export function ChatBottomSheet() {
           />
         )}
 
-        {/* Quick suggestions (solo si no hay mensajes) */}
+        {/* Quick suggestions (only show if no messages) */}
         {messages.length === 0 && (
           <View style={{ marginBottom: 12 }}>
             <Text
@@ -111,10 +162,10 @@ export function ChatBottomSheet() {
                 marginBottom: 8,
               }}
             >
-              💬 ¿A donde vas hoy?
+              {t('map.chatPrompt')}
             </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {QUICK_SUGGESTIONS.map((suggestion) => (
+              {quickSuggestions.map((suggestion) => (
                 <Pressable
                   key={suggestion}
                   onPress={() => handleSuggestion(suggestion)}
@@ -154,7 +205,7 @@ export function ChatBottomSheet() {
           <TextInput
             value={input}
             onChangeText={setInput}
-            placeholder="Escribe un mensaje..."
+            placeholder={t('chat.placeholder')}
             placeholderTextColor={colors.mutedForeground}
             style={{
               flex: 1,
@@ -167,12 +218,13 @@ export function ChatBottomSheet() {
             }}
             onSubmitEditing={handleSend}
             returnKeyType="send"
+            editable={!sendMessage.isPending}
           />
           <Pressable
             onPress={handleSend}
-            disabled={!input.trim() || isLoading}
+            disabled={!input.trim() || sendMessage.isPending}
             style={{
-              backgroundColor: input.trim() ? colors.primary : colors.muted,
+              backgroundColor: input.trim() && !sendMessage.isPending ? colors.primary : colors.muted,
               width: 44,
               height: 44,
               borderRadius: 22,
@@ -180,7 +232,11 @@ export function ChatBottomSheet() {
               alignItems: 'center',
             }}
           >
-            <Text style={{ fontSize: 18 }}>➤</Text>
+            {sendMessage.isPending ? (
+              <ActivityIndicator size="small" color={colors.mutedForeground} />
+            ) : (
+              <Icon name="send" size={20} color={input.trim() ? colors.primaryForeground : colors.mutedForeground} />
+            )}
           </Pressable>
         </View>
       </BottomSheetView>
