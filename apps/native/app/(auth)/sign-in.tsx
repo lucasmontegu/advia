@@ -1,22 +1,24 @@
+// apps/native/app/(auth)/sign-in.tsx
 import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button } from 'heroui-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '@/hooks/use-theme-colors';
 import { authClient } from '@/lib/auth-client';
+import { Icon } from '@/components/icons';
+import { useTranslation } from '@/lib/i18n';
 import { useState } from 'react';
 
 export default function SignInScreen() {
   const router = useRouter();
   const colors = useThemeColors();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<'google' | 'apple' | null>(null);
 
   const handleGoogleSignIn = async () => {
     setIsLoading('google');
     try {
-      await authClient.signIn.social({
-        provider: 'google',
-      });
+      await authClient.signIn.social({ provider: 'google' });
       router.replace('/(app)/(tabs)');
     } catch (error) {
       console.error('Google sign-in error:', error);
@@ -28,9 +30,7 @@ export default function SignInScreen() {
   const handleAppleSignIn = async () => {
     setIsLoading('apple');
     try {
-      await authClient.signIn.social({
-        provider: 'apple',
-      });
+      await authClient.signIn.social({ provider: 'apple' });
       router.replace('/(app)/(tabs)');
     } catch (error) {
       console.error('Apple sign-in error:', error);
@@ -47,8 +47,13 @@ export default function SignInScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <View className="flex-1 px-6 pt-4">
         {/* Back button */}
-        <Pressable onPress={() => router.back()} className="mb-8">
-          <Text style={{ color: colors.primary, fontSize: 16 }}>← Volver</Text>
+        <Pressable
+          onPress={() => router.back()}
+          className="mb-8"
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
+        >
+          <Icon name="arrowLeft" size={16} color={colors.primary} />
+          <Text style={{ color: colors.primary, fontSize: 16 }}>{t('auth.back')}</Text>
         </Pressable>
 
         {/* Header */}
@@ -60,7 +65,7 @@ export default function SignInScreen() {
             marginBottom: 8,
           }}
         >
-          Inicia sesion
+          {t('auth.signInTitle')}
         </Text>
 
         <Text
@@ -72,7 +77,7 @@ export default function SignInScreen() {
             lineHeight: 24,
           }}
         >
-          Sincroniza tus rutas y alertas en todos tus dispositivos
+          {t('auth.signInSubtitle')}
         </Text>
 
         {/* Social buttons */}
@@ -84,7 +89,7 @@ export default function SignInScreen() {
             isDisabled={isLoading !== null}
           >
             <Button.Label>
-              {isLoading === 'google' ? 'Conectando...' : 'Continuar con Google'}
+              {isLoading === 'google' ? t('auth.connecting') : t('auth.continueWithGoogle')}
             </Button.Label>
           </Button>
 
@@ -95,7 +100,7 @@ export default function SignInScreen() {
             isDisabled={isLoading !== null}
           >
             <Button.Label>
-              {isLoading === 'apple' ? 'Conectando...' : 'Continuar con Apple'}
+              {isLoading === 'apple' ? t('auth.connecting') : t('auth.continueWithApple')}
             </Button.Label>
           </Button>
         </View>
@@ -110,18 +115,14 @@ export default function SignInScreen() {
               fontFamily: 'NunitoSans_400Regular',
             }}
           >
-            o
+            {t('common.or')}
           </Text>
           <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
         </View>
 
         {/* Email option */}
-        <Button
-          onPress={handleEmailSignIn}
-          variant="ghost"
-          size="lg"
-        >
-          <Button.Label>Continuar con email</Button.Label>
+        <Button onPress={handleEmailSignIn} variant="ghost" size="lg">
+          <Button.Label>{t('auth.continueWithEmail')}</Button.Label>
         </Button>
       </View>
     </SafeAreaView>

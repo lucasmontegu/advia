@@ -5,18 +5,21 @@ import { Button, TextField } from 'heroui-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '@/hooks/use-theme-colors';
 import { authClient } from '@/lib/auth-client';
+import { Icon } from '@/components/icons';
+import { useTranslation } from '@/lib/i18n';
 import { useState } from 'react';
 
 export default function EmailInputScreen() {
   const router = useRouter();
   const colors = useThemeColors();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSendMagicLink = async () => {
     if (!email.trim()) {
-      setError('Ingresa tu email');
+      setError(t('auth.enterEmailError'));
       return;
     }
 
@@ -33,7 +36,7 @@ export default function EmailInputScreen() {
         params: { email: email.trim() },
       });
     } catch (err) {
-      setError('Error al enviar el link. Intenta de nuevo.');
+      setError(t('auth.sendError'));
     } finally {
       setIsLoading(false);
     }
@@ -43,8 +46,13 @@ export default function EmailInputScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <View className="flex-1 px-6 pt-4">
         {/* Back button */}
-        <Pressable onPress={() => router.back()} className="mb-8">
-          <Text style={{ color: colors.primary, fontSize: 16 }}>← Volver</Text>
+        <Pressable
+          onPress={() => router.back()}
+          className="mb-8"
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
+        >
+          <Icon name="arrowLeft" size={16} color={colors.primary} />
+          <Text style={{ color: colors.primary, fontSize: 16 }}>{t('auth.back')}</Text>
         </Pressable>
 
         {/* Header */}
@@ -56,7 +64,7 @@ export default function EmailInputScreen() {
             marginBottom: 8,
           }}
         >
-          Ingresa tu email
+          {t('auth.enterEmail')}
         </Text>
 
         <Text
@@ -68,7 +76,7 @@ export default function EmailInputScreen() {
             lineHeight: 24,
           }}
         >
-          Te enviaremos un link para iniciar sesion
+          {t('auth.signInSubtitle')}
         </Text>
 
         {/* Email input */}
@@ -76,7 +84,7 @@ export default function EmailInputScreen() {
           <TextField.Input
             value={email}
             onChangeText={setEmail}
-            placeholder="tu@email.com"
+            placeholder={t('auth.emailPlaceholder')}
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
@@ -96,13 +104,9 @@ export default function EmailInputScreen() {
           </Text>
         )}
 
-        <Button
-          onPress={handleSendMagicLink}
-          size="lg"
-          isDisabled={isLoading}
-        >
+        <Button onPress={handleSendMagicLink} size="lg" isDisabled={isLoading}>
           <Button.Label>
-            {isLoading ? 'Enviando...' : 'Enviar magic link'}
+            {isLoading ? t('auth.sending') : t('auth.sendMagicLink')}
           </Button.Label>
         </Button>
       </View>

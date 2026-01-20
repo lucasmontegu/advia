@@ -4,11 +4,14 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Button } from 'heroui-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '@/hooks/use-theme-colors';
+import { Icon } from '@/components/icons';
+import { useTranslation } from '@/lib/i18n';
 import * as Linking from 'expo-linking';
 
 export default function VerifyScreen() {
   const router = useRouter();
   const colors = useThemeColors();
+  const { t } = useTranslation();
   const { email } = useLocalSearchParams<{ email: string }>();
 
   const handleOpenEmail = async () => {
@@ -19,7 +22,9 @@ export default function VerifyScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <View className="flex-1 justify-center items-center px-8">
         {/* Icon */}
-        <Text style={{ fontSize: 64, marginBottom: 24 }}>📧</Text>
+        <View style={{ marginBottom: 24 }}>
+          <Icon name="mail" size={64} color={colors.primary} />
+        </View>
 
         {/* Header */}
         <Text
@@ -31,7 +36,7 @@ export default function VerifyScreen() {
             marginBottom: 8,
           }}
         >
-          Revisa tu email
+          {t('auth.checkEmail')}
         </Text>
 
         <Text
@@ -44,7 +49,7 @@ export default function VerifyScreen() {
             lineHeight: 24,
           }}
         >
-          Enviamos un link de acceso a
+          {t('auth.magicLinkSent')}
         </Text>
 
         <Text
@@ -65,7 +70,7 @@ export default function VerifyScreen() {
           size="lg"
           className="w-full mb-4"
         >
-          <Button.Label>Abrir app de email</Button.Label>
+          <Button.Label>{t('auth.openEmailApp')}</Button.Label>
         </Button>
 
         <Pressable onPress={() => router.back()}>
@@ -75,7 +80,7 @@ export default function VerifyScreen() {
               fontFamily: 'NunitoSans_400Regular',
             }}
           >
-            Usar otro email
+            {t('auth.useAnotherEmail')}
           </Text>
         </Pressable>
       </View>
