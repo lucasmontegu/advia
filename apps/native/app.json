@@ -10,12 +10,7 @@
     "slug": "advia",
     "plugins": [
       "expo-font",
-      [
-        "@rnmapbox/maps",
-        {
-          "RNMapboxMapsDownloadToken": "sk.placeholder"
-        }
-      ],
+      "@rnmapbox/maps",
       [
         "expo-location",
         {
