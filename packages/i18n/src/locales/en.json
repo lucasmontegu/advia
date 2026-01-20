@@ -1,0 +1,117 @@
+{
+  "common": {
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "or": "or"
+  },
+  "welcome": {
+    "tagline": "Your climate co-pilot",
+    "subtitle": "Avoid storms. Arrive safely.",
+    "startFree": "Start for free",
+    "trialInfo": "3 days with everything included, no account needed",
+    "haveAccount": "Already have an account?",
+    "signIn": "Sign in"
+  },
+  "auth": {
+    "signInTitle": "Sign in",
+    "signInSubtitle": "Sync your routes and alerts across all your devices",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithApple": "Continue with Apple",
+    "continueWithEmail": "Continue with email",
+    "enterEmail": "Enter your email",
+    "emailPlaceholder": "you@email.com",
+    "sendMagicLink": "Send magic link",
+    "sending": "Sending...",
+    "checkEmail": "Check your email",
+    "magicLinkSent": "We sent an access link to",
+    "openEmailApp": "Open email app",
+    "useAnotherEmail": "Use another email",
+    "connecting": "Connecting...",
+    "back": "Back",
+    "enterEmailError": "Please enter your email",
+    "sendError": "Error sending the link. Please try again."
+  },
+  "tabs": {
+    "map": "Map",
+    "routes": "Routes",
+    "profile": "Profile"
+  },
+  "map": {
+    "myZone": "My zone",
+    "chatPlaceholder": "Type a message...",
+    "chatPrompt": "Where are you going today?",
+    "suggestions": {
+      "workRoute": "My route to work",
+      "nearbyAlerts": "Nearby alerts",
+      "willItRain": "Will it rain today?"
+    }
+  },
+  "alerts": {
+    "extreme": "Extreme alert",
+    "severe": "Severe alert",
+    "moderate": "Moderate alert",
+    "minor": "Minor alert",
+    "distance": "{{distance}} away"
+  },
+  "routes": {
+    "title": "My Routes",
+    "addNew": "Add new route",
+    "history": "History",
+    "noAlerts": "No alerts",
+    "clear": "Clear",
+    "rain": "Rain at {{time}}",
+    "avoidedStorm": "Avoided storm",
+    "safeRoute": "Safe route",
+    "estimatedSavings": "Estimated savings: {{amount}}"
+  },
+  "profile": {
+    "title": "Profile",
+    "stats": "Statistics",
+    "stormsAvoided": "{{count}} storms avoided",
+    "moneySaved": "~${{amount}} saved",
+    "kmTraveled": "{{km}} km traveled safely",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "savedLocations": "Saved locations",
+    "theme": "Theme",
+    "themeAuto": "Auto",
+    "language": "Language",
+    "languageSpanish": "Español",
+    "languageEnglish": "English",
+    "help": "Help & support",
+    "logout": "Sign out",
+    "trialRemaining": "Trial: {{days}} days remaining",
+    "planPremium": "Plan: Premium",
+    "upgrade": "Upgrade"
+  },
+  "premium": {
+    "title": "Advia Premium",
+    "features": {
+      "unlimitedRoutes": "Unlimited routes",
+      "realTimeAlerts": "Real-time alerts",
+      "noAds": "No ads",
+      "refugeLocations": "Refuge locations",
+      "fullHistory": "Full history",
+      "multipleLocations": "Multiple locations"
+    },
+    "monthly": "$4.99/month",
+    "yearly": "$39.99/year (save 33%)",
+    "cancelAnytime": "Cancel anytime",
+    "processedBy": "Payment processed by Polar"
+  },
+  "loginIncentive": {
+    "title": "Save your data",
+    "subtitle": "Sign in to sync routes and locations across all your devices.",
+    "continueWithoutAccount": "Continue without account",
+    "localDataOnly": "(local data only)"
+  },
+  "chat": {
+    "placeholder": "Type a message...",
+    "comingSoon": "This feature will be available soon."
+  }
+}
