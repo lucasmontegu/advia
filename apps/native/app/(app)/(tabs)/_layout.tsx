@@ -1,8 +1,6 @@
 // apps/native/app/(app)/(tabs)/_layout.tsx
 import { Tabs } from 'expo-router';
-import { View, Text } from 'react-native';
 import { useThemeColors } from '@/hooks/use-theme-colors';
-import { useTrialStore } from '@/stores/trial-store';
 import { Icon, type IconName } from '@/components/icons';
 
 function TabIcon({ name, focused }: { name: IconName; focused: boolean }) {
@@ -18,7 +16,6 @@ function TabIcon({ name, focused }: { name: IconName; focused: boolean }) {
 
 export default function TabLayout() {
   const colors = useThemeColors();
-  const { isPremium } = useTrialStore();
 
   return (
     <Tabs

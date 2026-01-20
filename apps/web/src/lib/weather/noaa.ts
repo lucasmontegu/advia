@@ -127,7 +127,7 @@ export async function getAlertsByPoint(
     throw new Error(`NOAA API error: ${response.status} ${response.statusText}`);
   }
 
-  const data: NOAAResponse = await response.json();
+  const data = await response.json() as NOAAResponse;
 
   return data.features.map((feature) => ({
     id: crypto.randomUUID(),
@@ -171,7 +171,7 @@ export async function getAlertsByZone(zoneId: string): Promise<NOAAAlert[]> {
     throw new Error(`NOAA API error: ${response.status} ${response.statusText}`);
   }
 
-  const data: NOAAResponse = await response.json();
+  const data = await response.json() as NOAAResponse;
 
   return data.features.map((feature) => ({
     id: crypto.randomUUID(),
@@ -212,7 +212,7 @@ export async function getAllActiveAlerts(): Promise<NOAAAlert[]> {
     throw new Error(`NOAA API error: ${response.status} ${response.statusText}`);
   }
 
-  const data: NOAAResponse = await response.json();
+  const data = await response.json() as NOAAResponse;
 
   return data.features.map((feature) => ({
     id: crypto.randomUUID(),

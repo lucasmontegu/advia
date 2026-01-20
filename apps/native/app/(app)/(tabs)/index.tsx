@@ -13,7 +13,7 @@ import { useTranslation } from '@/lib/i18n';
 export default function MapScreen() {
   const colors = useThemeColors();
   const { t } = useTranslation();
-  const [alerts, setAlerts] = useState([]);
+  const [alerts] = useState([]);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>

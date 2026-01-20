@@ -23,6 +23,8 @@
     "ai": "^6.0.39",
     "ai-sdk-tools": "^1.2.0",
     "dotenv": "catalog:",
+    "drizzle-orm": "^0.45.1",
+    "nanoid": "^5.0.9",
     "next": "catalog:",
     "zod": "catalog:"
   },

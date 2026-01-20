@@ -1,3 +1,5 @@
 {
-  "extends": "@advia/config/tsconfig.base.json"
+  "extends": "@advia/config/tsconfig.base.json",
+  "include": ["packages/**/*"],
+  "exclude": ["apps/**/*", "node_modules", "dist", ".next"]
 }

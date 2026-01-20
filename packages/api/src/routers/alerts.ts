@@ -27,7 +27,7 @@ export const alertsRouter = {
           return { alerts: [] };
         }
 
-        const data = await response.json();
+        const data = await response.json() as { features?: any[] };
 
         const alerts = data.features?.map((feature: any) => ({
           id: feature.id,
@@ -46,7 +46,7 @@ export const alertsRouter = {
       }
     }),
 
-  getHistory: protectedProcedure.handler(async ({ context }) => {
+  getHistory: protectedProcedure.handler(async () => {
     // TODO: Implement from alert_history table
     return { alerts: [] };
   }),

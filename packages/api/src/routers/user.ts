@@ -20,12 +20,12 @@ export const userRouter = {
         notificationsEnabled: z.boolean().optional(),
       })
     )
-    .handler(async ({ input, context }) => {
+    .handler(async () => {
       // TODO: Add settings columns to user table or create separate settings table
       return { success: true };
     }),
 
-  getStats: protectedProcedure.handler(async ({ context }) => {
+  getStats: protectedProcedure.handler(async () => {
     // TODO: Calculate real stats from alert-history and routes
     return {
       stormsAvoided: 12,
