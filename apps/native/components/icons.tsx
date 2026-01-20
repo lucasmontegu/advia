@@ -1,10 +1,10 @@
 // apps/native/components/icons.tsx
 import { HugeiconsIcon } from '@hugeicons/react-native';
 import {
-  Map01Icon,
+  MapsIcon,
   Route01Icon,
   UserIcon,
-  CloudLightning01Icon,
+  CloudAngledZapIcon,
   DollarCircleIcon,
   Road01Icon,
   Notification01Icon,
@@ -18,7 +18,7 @@ import {
   Settings01Icon,
   ArrowRight01Icon,
   Mail01Icon,
-  Star01Icon,
+  StarIcon,
   Cancel01Icon,
   Tick01Icon,
   CheckmarkCircle01Icon,
@@ -55,10 +55,10 @@ export type IconName =
   | 'lock';
 
 const iconMap = {
-  map: Map01Icon,
+  map: MapsIcon,
   route: Route01Icon,
   user: UserIcon,
-  storm: CloudLightning01Icon,
+  storm: CloudAngledZapIcon,
   money: DollarCircleIcon,
   road: Road01Icon,
   notification: Notification01Icon,
@@ -73,7 +73,7 @@ const iconMap = {
   arrowRight: ArrowRight01Icon,
   arrowLeft: ArrowLeft01Icon,
   mail: Mail01Icon,
-  star: Star01Icon,
+  star: StarIcon,
   close: Cancel01Icon,
   check: Tick01Icon,
   checkCircle: CheckmarkCircle01Icon,
