@@ -14,7 +14,7 @@ export default function LandingPage() {
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <a
-            href="#"
+            href="https://apps.apple.com/ar/app/gowai/id678901234567890"
             className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-gray-800"
           >
             Descargar App
