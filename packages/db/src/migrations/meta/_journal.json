@@ -15,6 +15,13 @@
       "when": 1768934186374,
       "tag": "0001_clammy_namora",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768959762871,
+      "tag": "0002_brown_cannonball",
+      "breakpoints": true
     }
   ]
 }

@@ -20,6 +20,10 @@ export const env = createEnv({
     // Email
     RESEND_API_KEY: z.string().min(1),
     EMAIL_FROM: z.string().email().default("Advia <delivered@resend.dev>"),
+    // Weather API
+    TOMORROW_IO_API_KEY: z.string().min(1),
+    // Mapbox (for server-side POI search)
+    MAPBOX_ACCESS_TOKEN: z.string().startsWith("pk.").optional(),
   },
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,

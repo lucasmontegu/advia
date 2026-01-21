@@ -7,8 +7,10 @@ import {
   numeric,
   integer,
   index,
+  jsonb,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth";
+import type { RoadRisk, WeatherSnapshot, TripAlert } from "./weather";
 
 // Saved routes (e.g., "Home to Work")
 export const savedRoute = pgTable(
@@ -70,6 +72,10 @@ export const tripHistory = pgTable(
     startedAt: timestamp("started_at").defaultNow().notNull(),
     completedAt: timestamp("completed_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
+    // Weather tracking during trip
+    weatherSnapshots: jsonb("weather_snapshots").$type<WeatherSnapshot[]>(),
+    maxRiskEncountered: text("max_risk_encountered").$type<RoadRisk>(),
+    alertsEncountered: jsonb("alerts_encountered").$type<TripAlert[]>(),
   },
   (table) => [
     index("trip_history_userId_idx").on(table.userId),

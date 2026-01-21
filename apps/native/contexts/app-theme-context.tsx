@@ -46,10 +46,18 @@ export const AppThemeProvider = ({ children }: { children: React.ReactNode }) =>
   return <AppThemeContext.Provider value={value}>{children}</AppThemeContext.Provider>;
 };
 
+// Default values for when context is not yet available (during Suspense)
+const defaultThemeContext: AppThemeContextType = {
+  currentTheme: "light",
+  isLight: true,
+  isDark: false,
+  setTheme: () => {},
+  toggleTheme: () => {},
+};
+
 export function useAppTheme() {
   const context = useContext(AppThemeContext);
-  if (!context) {
-    throw new Error("useAppTheme must be used within AppThemeProvider");
-  }
-  return context;
+  // Return default values during Suspense/initial render instead of throwing
+  // This handles expo-router's Suspense boundary gracefully
+  return context ?? defaultThemeContext;
 }
