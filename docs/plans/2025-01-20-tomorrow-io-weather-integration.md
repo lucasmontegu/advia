@@ -458,40 +458,40 @@ function getCacheTTL(weather: WeatherData): number {
 
 ## Implementation Phases
 
-### Phase 1: Base Infrastructure
-- Configure Tomorrow.io API key in `packages/env`
-- Create new tables (`weather_cache`, `route_weather_analysis`, `safe_places_cache`, `api_usage`)
-- Modify `trip_history` with new fields
-- Tomorrow.io client with rate limit handling
+### Phase 1: Base Infrastructure ✅
+- [x] Configure Tomorrow.io API key in `packages/env`
+- [x] Create new tables (`weather_cache`, `route_weather_analysis`, `safe_places_cache`, `api_usage`)
+- [x] Modify `trip_history` with new fields
+- [x] Tomorrow.io client with rate limit handling
 
-### Phase 2: Weather Router
-- `weather.getCurrent` with grid caching
-- `weather.getForecast` with dynamic TTL
-- `weather.getAlerts` integrated with `alert_history`
-- `weather.analyzeRoute` with Mapbox polyline
-- `weather.getRouteUpdates` for trip monitoring
+### Phase 2: Weather Router ✅
+- [x] `weather.getCurrent` with grid caching
+- [x] `weather.getForecast` with dynamic TTL
+- [x] `weather.getAlerts` integrated with `alert_history`
+- [x] `weather.analyzeRoute` with Mapbox polyline
+- [x] `weather.getRouteUpdates` for trip monitoring
 
-### Phase 3: Places Router
-- `places.getSafePlaces` with Mapbox Search API
-- 24-48 hour cache for POIs
-- Filters by type (gas stations, rest areas, towns)
+### Phase 3: Places Router ✅
+- [x] `places.getSafePlaces` with Mapbox Search API
+- [x] 24-48 hour cache for POIs
+- [x] Filters by type (gas stations, rest areas, towns)
 
-### Phase 4: Native App UI
-- `WeatherOverlay` for the map
-- `RouteRiskBadge` risk indicator
-- `useWeatherMonitor` hook with dynamic frequency
-- `WeatherAlertModal` tiered by severity
-- `SafePlacesList` with navigation to shelters
+### Phase 4: Native App UI ✅
+- [x] `WeatherOverlay` for the map
+- [x] `RouteRiskBadge` risk indicator
+- [x] `useWeatherMonitor` hook with dynamic frequency
+- [x] `WeatherAlertModal` tiered by severity
+- [x] `SafePlacesList` with navigation to shelters
 
-### Phase 5: Agent Tools
-- Integrate 6 tools into Gemini chat
-- Update system prompt
-- Test conversations with tools
+### Phase 5: Agent Tools ✅
+- [x] Integrate 6 tools into Gemini chat
+- [x] Update system prompt
+- [x] Test conversations with tools
 
-### Phase 6: Monitoring & Metrics
-- API usage dashboard
-- Alerts when approaching daily limit
-- Metrics for routes analyzed and alerts sent
+### Phase 6: Monitoring & Metrics ✅
+- [x] API usage tracking (`api_usage` table)
+- [x] `checkApiLimit()` function for daily limit alerts
+- [x] `getUsageStats` endpoint for monitoring
 
 ---
 
