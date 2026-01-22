@@ -1,0 +1,33 @@
+{
+  "name": "Driwet",
+  "subtitle": {
+    "en": "Weather Alerts for Drivers",
+    "es": "Alertas de Clima para Conductores"
+  },
+  "description": {
+    "en": "Driwet is your personal weather co-pilot for safer driving. Get real-time weather alerts along your route and find shelter when storms approach.\n\nKEY FEATURES:\n\n• Weather-Aware Routes\nSee weather conditions displayed directly on your route. Color-coded segments (green/yellow/red) show road risk levels so you can plan accordingly.\n\n• Proactive Storm Alerts\nReceive notifications 15-30 minutes before dangerous weather impacts your route. Stay one step ahead of storms.\n\n• Shelter Discovery\nWhen severe weather hits, quickly find nearby safe locations like gas stations, rest areas, and towns. One-tap navigation to the nearest shelter.\n\n• AI Weather Assistant\nAsk questions like \"Is it safe to drive to Córdoba?\" and get intelligent, contextual answers based on real-time weather data.\n\n• Background Monitoring\nEven when the app is in the background, Driwet monitors weather along your route and alerts you to changes.\n\nPERFECT FOR:\n• Long-distance drivers\n• Delivery professionals\n• Road trip enthusiasts\n• Anyone who drives in unpredictable weather\n\nDriwet uses Tomorrow.io weather data for accurate forecasts and road risk assessments. Available in English and Spanish.\n\nStart your free 3-day trial today and drive with confidence!",
+    "es": "Driwet es tu co-piloto climático personal para manejar más seguro. Recibe alertas de clima en tiempo real en tu ruta y encuentra refugio cuando se acercan tormentas.\n\nCARACTERÍSTICAS:\n\n• Rutas con Información del Clima\nVe las condiciones del clima directamente en tu ruta. Segmentos de colores (verde/amarillo/rojo) muestran el nivel de riesgo vial para que puedas planificar.\n\n• Alertas Proactivas de Tormentas\nRecibe notificaciones 15-30 minutos antes de que el clima peligroso impacte tu ruta. Mantente un paso adelante de las tormentas.\n\n• Descubrimiento de Refugios\nCuando hay clima severo, encuentra rápidamente lugares seguros cercanos como estaciones de servicio, áreas de descanso y localidades. Navegación con un toque al refugio más cercano.\n\n• Asistente de Clima con IA\nHaz preguntas como \"¿Es seguro manejar a Córdoba?\" y obtén respuestas inteligentes basadas en datos de clima en tiempo real.\n\n• Monitoreo en Segundo Plano\nIncluso cuando la app está en segundo plano, Driwet monitorea el clima en tu ruta y te alerta sobre cambios.\n\nIDEAL PARA:\n• Conductores de larga distancia\n• Profesionales de delivery\n• Entusiastas de road trips\n• Cualquiera que maneje en clima impredecible\n\nDriwet usa datos de Tomorrow.io para pronósticos precisos y evaluaciones de riesgo vial. Disponible en inglés y español.\n\n¡Comienza tu prueba gratis de 3 días hoy y maneja con confianza!"
+  },
+  "keywords": {
+    "en": "weather,alerts,driving,storms,route,navigation,shelter,forecast,road,safety",
+    "es": "clima,alertas,conducir,tormentas,ruta,navegación,refugio,pronóstico,vial,seguridad"
+  },
+  "promotionalText": {
+    "en": "Drive safer with real-time weather alerts on your route!",
+    "es": "¡Maneja más seguro con alertas de clima en tiempo real en tu ruta!"
+  },
+  "category": "Weather",
+  "secondaryCategory": "Navigation",
+  "ageRating": "4+",
+  "pricing": {
+    "model": "freemium",
+    "trial": "3 days free",
+    "premium": {
+      "monthly": "$4.99",
+      "yearly": "$39.99"
+    }
+  },
+  "supportUrl": "https://driwet.com/support",
+  "privacyUrl": "https://driwet.com/privacy",
+  "marketingUrl": "https://driwet.com"
+}
