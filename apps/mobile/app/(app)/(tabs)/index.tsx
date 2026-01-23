@@ -1,4 +1,4 @@
-// apps/native/app/(app)/(tabs)/index.tsx
+// apps/mobile/app/(app)/(tabs)/index.tsx
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -7,8 +7,8 @@ import { useLocation } from '@/hooks/use-location';
 import { useActiveAlerts, useCurrentWeather } from '@/hooks/use-api';
 import { useRouteDirections } from '@/hooks/use-route-directions';
 import { MapViewComponent, type WeatherAlert } from '@/components/map-view';
-import { ChatInputBar } from '@/components/chat-input-bar';
-import { SmartSearchInput } from '@/components/smart-search-input';
+import { ChatInput, type RouteLocation } from '@/components/chat-input';
+import { RouteChips } from '@/components/route-chips';
 import { SuggestionsSheet } from '@/components/suggestions-sheet';
 import { WeatherOverlay } from '@/components/weather/weather-overlay';
 import { UpcomingTripBanner } from '@/components/upcoming-trip-banner';
@@ -16,11 +16,6 @@ import { Icon } from '@/components/icons';
 import { useTranslation } from '@/lib/i18n';
 import { useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'expo-router';
-
-type RouteLocation = {
-  name: string;
-  coordinates: { latitude: number; longitude: number };
-};
 
 export default function MapScreen() {
   const colors = useThemeColors();
@@ -33,6 +28,7 @@ export default function MapScreen() {
   const [origin, setOrigin] = useState<RouteLocation | null>(null);
   const [destination, setDestination] = useState<RouteLocation | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isChatLoading, setIsChatLoading] = useState(false);
 
   // Fetch alerts for current location
   const { data: alertsData } = useActiveAlerts(
@@ -73,9 +69,22 @@ export default function MapScreen() {
     }
   }, []);
 
-  const handleChatSubmit = useCallback((message: string) => {
-    // TODO: Integrate with chat system
-    console.log('Chat message:', message);
+  const handleClearRoute = useCallback(() => {
+    setOrigin(null);
+    setDestination(null);
+    setShowSuggestions(false);
+  }, []);
+
+  const handleChatSubmit = useCallback(async (message: string) => {
+    setIsChatLoading(true);
+    try {
+      // TODO: Integrate with chat API
+      console.log('Chat message:', message);
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } finally {
+      setIsChatLoading(false);
+    }
   }, []);
 
   const handleToggleSuggestions = useCallback(() => {
@@ -93,17 +102,14 @@ export default function MapScreen() {
     distance: routeDirections?.distance ?? 0,
     duration: routeDirections?.duration ?? 0,
     temperature: weatherData?.data?.temperature,
-    // Real alerts from API - only show if there are actual alerts in the area
     alerts: alerts.map((alert) => ({
       id: alert.id,
       type: alert.type,
       severity: alert.severity,
-      description: alert.headline || 'Alerta meteorológica',
-      kmRange: '', // TODO: Calculate actual km range based on route intersection
+      description: alert.headline || 'Alerta meteorologica',
+      kmRange: '',
     })),
-    // TODO: Integrate with POI API for suggested stops along route
     stops: [] as Array<{ id: string; name: string; type: 'gas' | 'rest' | 'food'; km: number; reason: string }>,
-    // TODO: Integrate with crowd data API for destination info
     destinations: [] as Array<{ name: string; crowdLevel: 'low' | 'medium' | 'high'; currentCount: number; maxCapacity: number }>,
   }), [alerts, weatherData?.data?.temperature, routeDirections]);
 
@@ -122,22 +128,17 @@ export default function MapScreen() {
           routeGeometry={routeDirections?.geometry?.coordinates}
         />
 
-        {/* Floating UI Elements */}
-        <View style={[styles.overlayContainer, { paddingTop: insets.top + 8 }]} pointerEvents="box-none">
-          {/* Smart Search Input */}
-          <SmartSearchInput
-            origin={origin}
-            destination={destination}
-            onRouteChange={handleRouteChange}
-          />
-
+        {/* Top overlay elements */}
+        <View style={[styles.topOverlay, { paddingTop: insets.top + 8 }]} pointerEvents="box-none">
           {/* Upcoming Trip Banner */}
-          <UpcomingTripBanner onViewDetails={handleViewTripDetails} />
+          <View style={styles.bannerContainer}>
+            <UpcomingTripBanner onViewDetails={handleViewTripDetails} />
+          </View>
 
           {/* Weather Card - Floating top right (only when no route) */}
           {!hasRoute && (
             <View
-              style={[styles.weatherCardContainer, { top: insets.top + 70 }]}
+              style={styles.weatherCardContainer}
               accessible={true}
               accessibilityRole="summary"
               accessibilityLabel={
@@ -177,10 +178,32 @@ export default function MapScreen() {
           )}
         </View>
 
-        {/* Chat Input Bar - Fixed above tabs (hidden when suggestions visible) */}
-        {!showSuggestions && (
-          <ChatInputBar onSubmit={handleChatSubmit} />
-        )}
+        {/* Bottom section - Chat Input and Route Chips */}
+        <View style={styles.bottomSection} pointerEvents="box-none">
+          {/* Route Chips - shown when route is active */}
+          {hasRoute && !showSuggestions && (
+            <View style={styles.routeChipsContainer}>
+              <RouteChips
+                origin={origin}
+                destination={destination}
+                distance={routeDirections?.distance}
+                duration={routeDirections?.duration}
+                onClear={handleClearRoute}
+              />
+            </View>
+          )}
+
+          {/* Chat Input - always visible (hidden when suggestions visible) */}
+          {!showSuggestions && (
+            <ChatInput
+              origin={origin}
+              destination={destination}
+              onRouteChange={handleRouteChange}
+              onChatSubmit={handleChatSubmit}
+              isLoading={isChatLoading}
+            />
+          )}
+        </View>
 
         {/* Suggestions Sheet */}
         {hasRoute && showSuggestions && (
@@ -205,18 +228,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  overlayContainer: {
-    ...StyleSheet.absoluteFillObject,
+  topOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     paddingHorizontal: 16,
+  },
+  bannerContainer: {
+    marginBottom: 8,
   },
   weatherCardContainer: {
     position: 'absolute',
     right: 16,
+    top: 70,
     maxWidth: 120,
   },
   suggestionsFab: {
     position: 'absolute',
-    bottom: 100,
+    top: 70,
     right: 16,
     flexDirection: 'row',
     alignItems: 'center',
@@ -233,5 +263,15 @@ const styles = StyleSheet.create({
   suggestionsFabText: {
     fontFamily: 'Inter_600SemiBold',
     fontSize: 14,
+  },
+  bottomSection: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  routeChipsContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 8,
   },
 });

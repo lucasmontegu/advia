@@ -33,6 +33,7 @@ import {
   ArrowDown01Icon,
   Clock01Icon,
   Search01Icon,
+  Mic01Icon,
 } from '@hugeicons/core-free-icons';
 import { useThemeColors } from '@/hooks/use-theme-colors';
 
@@ -68,7 +69,8 @@ export type IconName =
   | 'warning'
   | 'chevron-down'
   | 'clock'
-  | 'search';
+  | 'search'
+  | 'voice';
 
 const iconMap = {
   map: MapsIcon,
@@ -103,6 +105,7 @@ const iconMap = {
   'chevron-down': ArrowDown01Icon,
   clock: Clock01Icon,
   search: Search01Icon,
+  voice: Mic01Icon,
 } as const;
 
 interface IconProps {
