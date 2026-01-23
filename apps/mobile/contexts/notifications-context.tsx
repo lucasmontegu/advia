@@ -82,6 +82,16 @@ export function NotificationsProvider({ children }: NotificationsProviderProps) 
             router.push(shelterUrl);
             break;
 
+          case 'scheduled_trip':
+            // Navigate to route details for scheduled trip
+            const tripData = data as { tripId?: string; routeId?: string };
+            if (tripData.routeId) {
+              router.push(`/route-detail?id=${tripData.routeId}` as Href);
+            } else {
+              router.push('/routes' as Href);
+            }
+            break;
+
           default:
             // Default: go to home
             router.push('/');

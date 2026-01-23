@@ -10,9 +10,11 @@ import { ChatInputBar } from '@/components/chat-input-bar';
 import { SmartSearchInput } from '@/components/smart-search-input';
 import { SuggestionsSheet } from '@/components/suggestions-sheet';
 import { WeatherOverlay } from '@/components/weather/weather-overlay';
+import { UpcomingTripBanner } from '@/components/upcoming-trip-banner';
 import { Icon } from '@/components/icons';
 import { useTranslation } from '@/lib/i18n';
 import { useState, useCallback, useMemo } from 'react';
+import { useRouter } from 'expo-router';
 
 type RouteLocation = {
   name: string;
@@ -23,6 +25,7 @@ export default function MapScreen() {
   const colors = useThemeColors();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
+  const router = useRouter();
   const { location, isLoading: locationLoading } = useLocation();
 
   // Route state
@@ -72,6 +75,10 @@ export default function MapScreen() {
   }, []);
 
   const hasRoute = origin && destination;
+
+  const handleViewTripDetails = useCallback((trip: { routeId: string }) => {
+    router.push(`/route-detail?id=${trip.routeId}`);
+  }, [router]);
 
   // Mock data for suggestions (in production, this would come from APIs)
   const mockSuggestionsData = useMemo(() => ({
@@ -146,6 +153,9 @@ export default function MapScreen() {
             destination={destination}
             onRouteChange={handleRouteChange}
           />
+
+          {/* Upcoming Trip Banner */}
+          <UpcomingTripBanner onViewDetails={handleViewTripDetails} />
 
           {/* Weather Card - Floating top right (only when no route) */}
           {!hasRoute && (
