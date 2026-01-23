@@ -6,15 +6,17 @@ import { useThemeColors } from '@/hooks/use-theme-colors';
 import { useLocation } from '@/hooks/use-location';
 import { useActiveAlerts, useCurrentWeather } from '@/hooks/use-api';
 import { useRouteDirections } from '@/hooks/use-route-directions';
+import { usePaywall } from '@/hooks/use-paywall';
 import { MapViewComponent, type WeatherAlert } from '@/components/map-view';
 import { ChatInput, type RouteLocation } from '@/components/chat-input';
 import { RouteChips } from '@/components/route-chips';
 import { SuggestionsSheet } from '@/components/suggestions-sheet';
 import { WeatherOverlay } from '@/components/weather/weather-overlay';
 import { UpcomingTripBanner } from '@/components/upcoming-trip-banner';
+import { TrialBanner, PaywallModal } from '@/components/subscription';
 import { Icon } from '@/components/icons';
 import { useTranslation } from '@/lib/i18n';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 
 export default function MapScreen() {
@@ -23,6 +25,14 @@ export default function MapScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { location, isLoading: locationLoading } = useLocation();
+
+  // Subscription/Trial state
+  const paywall = usePaywall({ autoShowOnTrialExpiry: true });
+
+  // Check trial status on mount
+  useEffect(() => {
+    paywall.checkTrialStatus();
+  }, []);
 
   // Route state
   const [origin, setOrigin] = useState<RouteLocation | null>(null);
@@ -130,6 +140,9 @@ export default function MapScreen() {
 
         {/* Top overlay elements */}
         <View style={[styles.topOverlay, { paddingTop: insets.top + 8 }]} pointerEvents="box-none">
+          {/* Trial Countdown Banner */}
+          <TrialBanner />
+
           {/* Upcoming Trip Banner */}
           <View style={styles.bannerContainer}>
             <UpcomingTripBanner onViewDetails={handleViewTripDetails} />
@@ -219,6 +232,13 @@ export default function MapScreen() {
             onClose={() => setShowSuggestions(false)}
           />
         )}
+
+        {/* Paywall Modal - shown when trial expires */}
+        <PaywallModal
+          visible={paywall.isVisible}
+          onDismiss={paywall.dismiss}
+          allowDismiss={paywall.canDismiss}
+        />
       </View>
     </GestureHandlerRootView>
   );

@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Linking } from 'react-native';
 import { api } from '@/lib/query-client';
 import { useTrialStore } from '@/stores/trial-store';
-import { authClient } from '@/lib/auth-client';
+import { env } from '@driwet/env/mobile';
 
 export function useSubscriptionStatus() {
   const { setPremium } = useTrialStore();
@@ -24,28 +25,38 @@ export function useSubscriptionStatus() {
 }
 
 export function useSubscriptionCheckout() {
-  const handleCheckout = async (plan: 'monthly' | 'yearly') => {
+  const handleCheckout = useCallback(async (plan: 'monthly' | 'yearly') => {
     try {
-      // Use better-auth's polar checkout
-      // This will open the Polar checkout page in a web browser
-      await authClient.subscription.checkout({
-        slug: plan,
-      });
+      // Open web-based Polar checkout
+      // This will redirect to the Polar checkout page
+      const checkoutUrl = `${env.EXPO_PUBLIC_SERVER_URL}/api/subscription/checkout?plan=${plan}`;
+      const canOpen = await Linking.canOpenURL(checkoutUrl);
+      if (canOpen) {
+        await Linking.openURL(checkoutUrl);
+      } else {
+        throw new Error('Cannot open checkout URL');
+      }
     } catch (error) {
       console.error('Checkout error:', error);
       throw error;
     }
-  };
+  }, []);
 
-  const handlePortal = async () => {
+  const handlePortal = useCallback(async () => {
     try {
       // Open the customer portal to manage subscription
-      await authClient.subscription.portal();
+      const portalUrl = `${env.EXPO_PUBLIC_SERVER_URL}/api/subscription/portal`;
+      const canOpen = await Linking.canOpenURL(portalUrl);
+      if (canOpen) {
+        await Linking.openURL(portalUrl);
+      } else {
+        throw new Error('Cannot open portal URL');
+      }
     } catch (error) {
       console.error('Portal error:', error);
       throw error;
     }
-  };
+  }, []);
 
   return {
     checkout: handleCheckout,
