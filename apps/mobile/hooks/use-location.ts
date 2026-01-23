@@ -101,7 +101,8 @@ export function useLocation() {
     };
   }, []);
 
-  const isDriving = location?.speed ? location.speed > 4.17 : false; // > 15 km/h
+  // Simple driving detection - for advanced detection with hysteresis, use useDrivingMode
+  const isDriving = location?.speed ? location.speed > 2.78 : false; // > 10 km/h
 
   return {
     location,
