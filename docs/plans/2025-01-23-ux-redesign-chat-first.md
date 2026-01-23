@@ -199,22 +199,22 @@ export const chatSessions = pgTable('chat_sessions', {
 ### Fase 3: Monetización (Semanas 11-13)
 **Objetivo**: Revenue
 
-- [ ] Trial 7 días
-- [ ] Paywall post-trial
-- [ ] Integración RevenueCat/Stripe
-- [ ] Premium upgrade screen
-- [ ] Trial countdown banner
+- [x] Trial 7 días
+- [x] Paywall post-trial
+- [x] Integración Polar (Stripe alternative)
+- [x] Premium upgrade screen (already existed)
+- [x] Trial countdown banner
 
 ### Fase 4: Inteligencia Avanzada (Semanas 15-19)
 **Objetivo**: Diferenciación profunda
 
-- [ ] suggestBestDepartureTime
-- [ ] DepartureTimeCard
-- [ ] RouteCompareCard
-- [ ] Push notifications de clima
-- [ ] Alertas pre-viaje
-- [ ] Historial de rutas frecuentes
-- [ ] Ubicaciones guardadas (Casa, Trabajo)
+- [x] suggestBestDepartureTime
+- [x] DepartureTimeCard
+- [x] RouteCompareCard
+- [x] Push notifications de clima (already existed)
+- [x] Alertas pre-viaje (via scheduled trips)
+- [x] Historial de rutas frecuentes (already existed)
+- [x] Ubicaciones guardadas (Casa, Trabajo) (already existed)
 
 ---
 
