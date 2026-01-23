@@ -1,5 +1,5 @@
 import Mapbox, { Camera, LocationPuck, MapView as RNMapView, PointAnnotation, UserTrackingMode } from "@rnmapbox/maps";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { StyleSheet, View, type LayoutChangeEvent, ActivityIndicator } from "react-native";
 
 import { env } from "@driwet/env/mobile";
@@ -30,6 +30,12 @@ type MapViewProps = {
   showRouteIcons?: boolean;
   /** Destination coordinates for camera fitting */
   destination?: { latitude: number; longitude: number };
+  /** Origin coordinates for route display */
+  origin?: { latitude: number; longitude: number };
+  /** Route geometry from Directions API (coordinates array [lng, lat][]) */
+  routeGeometry?: [number, number][];
+  /** Whether to show weather radar overlay */
+  showWeatherRadar?: boolean;
   /** Callback when map is ready */
   onMapReady?: () => void;
 };
@@ -56,12 +62,47 @@ export function MapViewComponent({
   routeSegments = [],
   showRouteIcons = true,
   destination,
+  origin,
+  routeGeometry,
+  showWeatherRadar = true,
   onMapReady,
 }: MapViewProps) {
   const { location } = useLocation();
   const colors = useThemeColors();
   const [mapLoaded, setMapLoaded] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [radarTimestamp, setRadarTimestamp] = useState<string | null>(null);
+
+  // Fetch latest radar timestamp from RainViewer API
+  useEffect(() => {
+    const fetchRadarTimestamp = async () => {
+      try {
+        const response = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+        const data = await response.json();
+        if (data.radar?.past?.length > 0) {
+          // Get the most recent radar frame
+          const latestFrame = data.radar.past[data.radar.past.length - 1];
+          setRadarTimestamp(latestFrame.path);
+        }
+      } catch (error) {
+        console.error('Error fetching radar timestamp:', error);
+      }
+    };
+
+    if (showWeatherRadar) {
+      fetchRadarTimestamp();
+      // Refresh every 5 minutes
+      const interval = setInterval(fetchRadarTimestamp, 5 * 60 * 1000);
+      return () => clearInterval(interval);
+    }
+  }, [showWeatherRadar]);
+
+  // RainViewer radar tile URL
+  const radarTileUrl = useMemo(() => {
+    if (!radarTimestamp) return null;
+    // RainViewer tile URL format with transparency and color scheme
+    return `https://tilecache.rainviewer.com${radarTimestamp}/256/{z}/{x}/{y}/4/1_1.png`;
+  }, [radarTimestamp]);
 
   const initialCenter = location
     ? [location.longitude, location.latitude]
@@ -77,21 +118,25 @@ export function MapViewComponent({
 
   // Calculate bounds to fit both origin and destination if route is displayed
   const cameraBounds = useCallback(() => {
-    if (destination && location) {
-      const minLng = Math.min(location.longitude, destination.longitude);
-      const maxLng = Math.max(location.longitude, destination.longitude);
-      const minLat = Math.min(location.latitude, destination.latitude);
-      const maxLat = Math.max(location.latitude, destination.latitude);
+    const routeOrigin = origin || location;
+    if (destination && routeOrigin) {
+      const minLng = Math.min(routeOrigin.longitude, destination.longitude);
+      const maxLng = Math.max(routeOrigin.longitude, destination.longitude);
+      const minLat = Math.min(routeOrigin.latitude, destination.latitude);
+      const maxLat = Math.max(routeOrigin.latitude, destination.latitude);
 
-      // Add padding
-      const padding = 0.1;
+      // Add padding based on distance
+      const lngDiff = maxLng - minLng;
+      const latDiff = maxLat - minLat;
+      const padding = Math.max(0.1, Math.max(lngDiff, latDiff) * 0.1);
+
       return {
         ne: [maxLng + padding, maxLat + padding] as [number, number],
         sw: [minLng - padding, minLat - padding] as [number, number],
       };
     }
     return null;
-  }, [destination, location]);
+  }, [destination, origin, location]);
 
   useEffect(() => {
     if (mapLoaded && onMapReady) {
@@ -100,7 +145,7 @@ export function MapViewComponent({
   }, [mapLoaded, onMapReady]);
 
   const bounds = cameraBounds();
-  const hasRoute = routeSegments.length > 0;
+  const hasRoute = routeSegments.length > 0 || (routeGeometry && routeGeometry.length > 0);
 
   return (
     <View style={styles.container} onLayout={handleLayout}>
@@ -140,6 +185,25 @@ export function MapViewComponent({
           />
         )}
 
+        {/* Weather Radar Layer */}
+        {showWeatherRadar && radarTileUrl && (
+          <Mapbox.RasterSource
+            id="rainviewer-source"
+            tileUrlTemplates={[radarTileUrl]}
+            tileSize={256}
+            minZoomLevel={1}
+            maxZoomLevel={12}
+          >
+            <Mapbox.RasterLayer
+              id="rainviewer-layer"
+              sourceID="rainviewer-source"
+              style={{
+                rasterOpacity: 0.7,
+              }}
+            />
+          </Mapbox.RasterSource>
+        )}
+
         {/* User location puck */}
         <LocationPuck
           puckBearing="heading"
@@ -154,6 +218,54 @@ export function MapViewComponent({
             showIcons={showRouteIcons}
             lineWidth={6}
           />
+        )}
+
+        {/* Simple route line from Directions API */}
+        {routeGeometry && routeGeometry.length > 0 && routeSegments.length === 0 && (
+          <Mapbox.ShapeSource
+            id="route-line-source"
+            shape={{
+              type: "Feature",
+              geometry: {
+                type: "LineString",
+                coordinates: routeGeometry,
+              },
+              properties: {},
+            }}
+          >
+            <Mapbox.LineLayer
+              id="route-line-layer"
+              style={{
+                lineColor: "#3b82f6",
+                lineWidth: 5,
+                lineCap: "round",
+                lineJoin: "round",
+              }}
+            />
+            {/* Route outline for better visibility */}
+            <Mapbox.LineLayer
+              id="route-line-outline"
+              belowLayerID="route-line-layer"
+              style={{
+                lineColor: "#1e40af",
+                lineWidth: 8,
+                lineCap: "round",
+                lineJoin: "round",
+              }}
+            />
+          </Mapbox.ShapeSource>
+        )}
+
+        {/* Origin marker */}
+        {origin && (
+          <PointAnnotation
+            id="origin-marker"
+            coordinate={[origin.longitude, origin.latitude]}
+          >
+            <View style={styles.originMarker}>
+              <View style={styles.originMarkerInner} />
+            </View>
+          </PointAnnotation>
         )}
 
         {/* Destination marker */}
@@ -270,6 +382,27 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   destinationMarkerInner: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#ffffff",
+  },
+  originMarker: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#3b82f6",
+    borderColor: "#ffffff",
+    borderWidth: 3,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  originMarkerInner: {
     width: 8,
     height: 8,
     borderRadius: 4,

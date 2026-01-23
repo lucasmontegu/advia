@@ -88,56 +88,23 @@ export default function MapScreen() {
     router.push(`/route-detail?id=${trip.routeId}`);
   }, [router]);
 
-  // Route data for suggestions sheet (distance and duration from real API, others still mock)
+  // Route data for suggestions sheet
   const routeSuggestionsData = useMemo(() => ({
     distance: routeDirections?.distance ?? 0,
     duration: routeDirections?.duration ?? 0,
     temperature: weatherData?.data?.temperature,
-    alerts: alerts.length > 0 ? alerts.map((alert) => ({
+    // Real alerts from API - only show if there are actual alerts in the area
+    alerts: alerts.map((alert) => ({
       id: alert.id,
       type: alert.type,
       severity: alert.severity,
       description: alert.headline || 'Alerta meteorológica',
-      kmRange: 'km 45-78',
-    })) : [
-      {
-        id: '1',
-        type: 'storm',
-        severity: 'severe' as const,
-        description: 'Tormenta severa detectada en la ruta',
-        kmRange: 'km 45-78',
-      },
-    ],
-    stops: [
-      {
-        id: '1',
-        name: 'Estación YPF Pilar',
-        type: 'gas' as const,
-        km: 67,
-        reason: 'Buen momento para descanso antes de la tormenta',
-      },
-      {
-        id: '2',
-        name: 'Parador El Cruce',
-        type: 'rest' as const,
-        km: 120,
-        reason: 'Evita la tormenta aquí',
-      },
-    ],
-    destinations: [
-      {
-        name: 'Playa Grande',
-        crowdLevel: 'high' as const,
-        currentCount: 850,
-        maxCapacity: 1000,
-      },
-      {
-        name: 'Río Paraná - Zona Balneario',
-        crowdLevel: 'medium' as const,
-        currentCount: 320,
-        maxCapacity: 600,
-      },
-    ],
+      kmRange: '', // TODO: Calculate actual km range based on route intersection
+    })),
+    // TODO: Integrate with POI API for suggested stops along route
+    stops: [] as Array<{ id: string; name: string; type: 'gas' | 'rest' | 'food'; km: number; reason: string }>,
+    // TODO: Integrate with crowd data API for destination info
+    destinations: [] as Array<{ name: string; crowdLevel: 'low' | 'medium' | 'high'; currentCount: number; maxCapacity: number }>,
   }), [alerts, weatherData?.data?.temperature, routeDirections]);
 
   return (
@@ -150,7 +117,9 @@ export default function MapScreen() {
         {/* Fullscreen Map - extends behind notch */}
         <MapViewComponent
           alerts={alerts}
+          origin={origin?.coordinates}
           destination={destination?.coordinates}
+          routeGeometry={routeDirections?.geometry?.coordinates}
         />
 
         {/* Floating UI Elements */}
