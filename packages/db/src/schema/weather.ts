@@ -14,7 +14,7 @@ import { savedRoute } from "./routes";
 
 // Weather data types
 export type RoadRisk = "low" | "moderate" | "high" | "extreme";
-export type WeatherSource = "tomorrow" | "noaa";
+export type WeatherSource = "tomorrow" | "openweather" | "noaa";
 export type PlaceType = "gas_station" | "rest_area" | "town";
 
 export interface WeatherData {
@@ -141,7 +141,7 @@ export const safePlacesCache = pgTable(
 );
 
 // API usage tracking
-export type ApiProvider = "tomorrow" | "mapbox";
+export type ApiProvider = "tomorrow" | "openweather" | "mapbox";
 
 export const apiUsage = pgTable(
   "api_usage",
