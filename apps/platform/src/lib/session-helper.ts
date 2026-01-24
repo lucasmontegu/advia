@@ -10,6 +10,9 @@ export interface SessionResult {
 /**
  * Get session from either mobile token or web cookies
  * Handles both authentication methods in a unified way
+ *
+ * Better Auth validates sessions using cookies, so for mobile tokens
+ * we need to pass them as a cookie header, not a Bearer token.
  */
 export async function getSessionFromRequest(
   mobileToken: string | null
@@ -19,9 +22,10 @@ export async function getSessionFromRequest(
 
   if (mobileToken) {
     // Validate the session token from mobile app
+    // Better Auth expects the token as a cookie, not a Bearer token
     session = await auth.api.getSession({
       headers: new Headers({
-        Authorization: `Bearer ${mobileToken}`,
+        cookie: `better-auth.session_token=${mobileToken}`,
       }),
     });
   } else {

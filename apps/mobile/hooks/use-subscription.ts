@@ -1,125 +1,149 @@
-import { useEffect, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import * as WebBrowser from 'expo-web-browser';
-import * as SecureStore from 'expo-secure-store';
-import Constants from 'expo-constants';
-import { api } from '@/lib/query-client';
+// apps/mobile/hooks/use-subscription.ts
+// Subscription hooks using RevenueCat
+
+import { useCallback } from 'react';
+import { Alert } from 'react-native';
+import { useRevenueCat } from '@/providers/revenuecat-provider';
 import { useTrialStore } from '@/stores/trial-store';
-import { env } from '@driwet/env/mobile';
 
-// Helper to get app scheme with proper null handling
-function getAppScheme(): string {
-  const scheme = Constants.expoConfig?.scheme;
-  if (!scheme) {
-    throw new Error('App scheme not configured in app.json');
-  }
-  return typeof scheme === 'string' ? scheme : scheme[0];
-}
+/**
+ * Hook to check if user has premium access
+ * Premium access is granted if:
+ * 1. User has an active RevenueCat subscription (Driwet Pro entitlement)
+ * 2. User is in trial period
+ */
+export function useIsPremium() {
+  const { isProUser, isLoading, activeSubscription } = useRevenueCat();
+  const { isTrialActive } = useTrialStore();
 
-export function useSubscriptionStatus() {
-  const { setPremium } = useTrialStore();
-
-  const query = useQuery({
-    ...api.subscription.getStatus.queryOptions(),
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: true,
-  });
-
-  // Sync with trial store when subscription status changes
-  useEffect(() => {
-    if (query.data) {
-      setPremium(query.data.isActive);
-    }
-  }, [query.data, setPremium]);
-
-  return query;
-}
-
-// Helper to get session token from SecureStore
-async function getSessionToken(): Promise<string | null> {
-  try {
-    const scheme = getAppScheme();
-    const tokenKey = `${scheme}_better-auth.session_token`;
-    const token = await SecureStore.getItemAsync(tokenKey);
-    return token;
-  } catch (error) {
-    console.error('Failed to get session token:', error);
-    return null;
-  }
-}
-
-export function useSubscriptionCheckout() {
-  const handleCheckout = useCallback(async (plan: 'monthly' | 'yearly') => {
-    try {
-      // Get the session token to pass to the checkout endpoint
-      const sessionToken = await getSessionToken();
-      if (!sessionToken) {
-        throw new Error('Not authenticated. Please sign in first.');
-      }
-
-      // Build checkout URL with session token
-      const scheme = getAppScheme();
-      const checkoutUrl = `${env.EXPO_PUBLIC_SERVER_URL}/api/subscription/checkout?plan=${plan}&token=${encodeURIComponent(sessionToken)}`;
-      const returnUrl = `${scheme}://subscription/success`;
-
-      // Use WebBrowser.openAuthSessionAsync for better handling of auth flows
-      // This will open the checkout in an in-app browser and handle the deep link return
-      const result = await WebBrowser.openAuthSessionAsync(checkoutUrl, returnUrl);
-
-      if (result.type === 'cancel') {
-        console.log('Checkout cancelled by user');
-      }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      throw error;
-    }
-  }, []);
-
-  const handlePortal = useCallback(async () => {
-    try {
-      // Get the session token to pass to the portal endpoint
-      const sessionToken = await getSessionToken();
-      if (!sessionToken) {
-        throw new Error('Not authenticated. Please sign in first.');
-      }
-
-      // Build portal URL with session token
-      const scheme = getAppScheme();
-      const portalUrl = `${env.EXPO_PUBLIC_SERVER_URL}/api/subscription/portal?token=${encodeURIComponent(sessionToken)}`;
-      const returnUrl = `${scheme}://`;
-
-      // Use WebBrowser.openAuthSessionAsync for portal access
-      await WebBrowser.openAuthSessionAsync(portalUrl, returnUrl);
-    } catch (error) {
-      console.error('Portal error:', error);
-      throw error;
-    }
-  }, []);
+  // User has premium access if subscribed OR in trial
+  const isPremium = isProUser || isTrialActive;
 
   return {
-    checkout: handleCheckout,
-    portal: handlePortal,
+    isPremium,
+    isSubscribed: isProUser,
+    plan: activeSubscription,
+    isLoading,
   };
 }
 
-export function useIsPremium() {
-  const { isPremium, isTrialActive, checkTrialStatus } = useTrialStore();
-  const { data: subscription, isLoading } = useSubscriptionStatus();
+/**
+ * Hook for subscription checkout actions
+ * Uses RevenueCat's native paywall UI
+ */
+export function useSubscriptionCheckout() {
+  const { presentPaywall, presentPaywallIfNeeded, isLoading } = useRevenueCat();
 
-  // Check trial status on mount
-  useEffect(() => {
-    checkTrialStatus();
-  }, [checkTrialStatus]);
+  const checkout = useCallback(async (): Promise<boolean> => {
+    try {
+      const success = await presentPaywall({
+        displayCloseButton: true,
+      });
+      return success;
+    } catch (error) {
+      console.error('[Subscription] Checkout error:', error);
+      Alert.alert(
+        'Error',
+        'No se pudo iniciar el proceso de pago. Intenta de nuevo.',
+        [{ text: 'OK' }]
+      );
+      return false;
+    }
+  }, [presentPaywall]);
 
-  // User has premium access if:
-  // 1. They have an active subscription, OR
-  // 2. They are in trial period
-  const hasPremiumAccess = subscription?.isActive || isTrialActive || isPremium;
+  const checkoutIfNeeded = useCallback(async (): Promise<boolean> => {
+    try {
+      const success = await presentPaywallIfNeeded();
+      return success;
+    } catch (error) {
+      console.error('[Subscription] Checkout if needed error:', error);
+      return false;
+    }
+  }, [presentPaywallIfNeeded]);
 
   return {
-    isPremium: hasPremiumAccess,
-    isSubscribed: subscription?.isActive ?? false,
-    plan: subscription?.plan ?? null,
+    checkout,
+    checkoutIfNeeded,
     isLoading,
+  };
+}
+
+/**
+ * Hook for subscription management (portal/customer center)
+ */
+export function useSubscriptionManagement() {
+  const { presentCustomerCenter, restorePurchases, isLoading } = useRevenueCat();
+
+  const openManagement = useCallback(async () => {
+    try {
+      await presentCustomerCenter();
+    } catch (error) {
+      console.error('[Subscription] Management error:', error);
+      Alert.alert(
+        'Error',
+        'No se pudo abrir la gestión de suscripción.',
+        [{ text: 'OK' }]
+      );
+    }
+  }, [presentCustomerCenter]);
+
+  const restore = useCallback(async (): Promise<boolean> => {
+    try {
+      const hasAccess = await restorePurchases();
+      if (hasAccess) {
+        Alert.alert(
+          'Compras restauradas',
+          'Tus compras han sido restauradas exitosamente.',
+          [{ text: 'OK' }]
+        );
+      } else {
+        Alert.alert(
+          'Sin compras',
+          'No se encontraron compras previas para restaurar.',
+          [{ text: 'OK' }]
+        );
+      }
+      return hasAccess;
+    } catch (error) {
+      console.error('[Subscription] Restore error:', error);
+      Alert.alert(
+        'Error',
+        'No se pudieron restaurar las compras. Intenta de nuevo.',
+        [{ text: 'OK' }]
+      );
+      return false;
+    }
+  }, [restorePurchases]);
+
+  return {
+    openManagement,
+    restore,
+    isLoading,
+  };
+}
+
+/**
+ * Hook to get subscription details
+ */
+export function useSubscriptionDetails() {
+  const {
+    customerInfo,
+    currentOffering,
+    activeSubscription,
+    expirationDate,
+    isProUser,
+  } = useRevenueCat();
+
+  return {
+    customerInfo,
+    currentOffering,
+    activeSubscription,
+    expirationDate,
+    isProUser,
+    // Packages from current offering
+    packages: currentOffering?.availablePackages ?? [],
+    monthlyPackage: currentOffering?.monthly ?? null,
+    yearlyPackage: currentOffering?.annual ?? null,
+    lifetimePackage: currentOffering?.lifetime ?? null,
   };
 }

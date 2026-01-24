@@ -1,21 +1,29 @@
-// apps/native/app/(app)/premium.tsx
+// apps/mobile/app/(app)/premium.tsx
+// Premium screen with RevenueCat integration
 import { useState } from 'react';
-import { View, Text, Pressable, ScrollView, Alert } from 'react-native';
+import { View, Text, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Button } from 'heroui-native';
 import { useThemeColors } from '@/hooks/use-theme-colors';
 import { useTranslation } from '@/lib/i18n';
-import { useSubscriptionCheckout, useIsPremium } from '@/hooks/use-subscription';
+import {
+  useSubscriptionCheckout,
+  useSubscriptionManagement,
+  useIsPremium,
+  useSubscriptionDetails,
+} from '@/hooks/use-subscription';
 import { Icon } from '@/components/icons';
 
 export default function PremiumScreen() {
   const colors = useThemeColors();
   const router = useRouter();
   const { t } = useTranslation();
-  const { checkout, portal } = useSubscriptionCheckout();
-  const { isSubscribed, plan } = useIsPremium();
-  const [isLoading, setIsLoading] = useState<'monthly' | 'yearly' | 'portal' | null>(null);
+  const { checkout, isLoading: isCheckoutLoading } = useSubscriptionCheckout();
+  const { openManagement, restore, isLoading: isManagementLoading } = useSubscriptionManagement();
+  const { isSubscribed, isPremium } = useIsPremium();
+  const { activeSubscription, expirationDate } = useSubscriptionDetails();
+  const [isRestoring, setIsRestoring] = useState(false);
 
   const features = [
     t('premium.features.unlimitedRoutes'),
@@ -26,30 +34,33 @@ export default function PremiumScreen() {
     t('premium.features.multipleLocations'),
   ];
 
-  const handleSubscribe = async (selectedPlan: 'monthly' | 'yearly') => {
-    setIsLoading(selectedPlan);
-    try {
-      await checkout(selectedPlan);
-    } catch (error) {
-      console.error('Checkout error:', error);
-      Alert.alert(
-        t('common.error'),
-        t('subscription.checkoutError'),
-        [{ text: t('common.retry'), onPress: () => handleSubscribe(selectedPlan) }]
-      );
-    } finally {
-      setIsLoading(null);
-    }
+  const handleSubscribe = async () => {
+    await checkout();
   };
 
   const handleManageSubscription = async () => {
-    setIsLoading('portal');
+    await openManagement();
+  };
+
+  const handleRestorePurchases = async () => {
+    setIsRestoring(true);
     try {
-      await portal();
-    } catch (error) {
-      console.error('Portal error:', error);
+      await restore();
     } finally {
-      setIsLoading(null);
+      setIsRestoring(false);
+    }
+  };
+
+  const isLoading = isCheckoutLoading || isManagementLoading || isRestoring;
+
+  // Format expiration date for display
+  const formatExpirationDate = (dateStr: string | null) => {
+    if (!dateStr) return null;
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString();
+    } catch {
+      return null;
     }
   };
 
@@ -71,7 +82,7 @@ export default function PremiumScreen() {
         <Text style={{ fontSize: 48, marginBottom: 16 }}>⭐</Text>
         <Text
           style={{
-            fontFamily: 'NunitoSans_700Bold',
+            fontFamily: 'Inter_600SemiBold',
             fontSize: 28,
             color: colors.foreground,
             marginBottom: 8,
@@ -88,19 +99,33 @@ export default function PremiumScreen() {
               paddingHorizontal: 16,
               paddingVertical: 6,
               borderRadius: 20,
-              marginBottom: 24,
+              marginBottom: 8,
             }}
           >
             <Text
               style={{
-                fontFamily: 'NunitoSans_600SemiBold',
+                fontFamily: 'Inter_600SemiBold',
                 fontSize: 14,
                 color: colors.primaryForeground,
               }}
             >
-              {plan === 'yearly' ? t('subscription.planYearly') : t('subscription.planMonthly')}
+              Driwet Pro
             </Text>
           </View>
+        )}
+
+        {/* Expiration date */}
+        {isSubscribed && expirationDate && (
+          <Text
+            style={{
+              fontFamily: 'Inter_400Regular',
+              fontSize: 12,
+              color: colors.mutedForeground,
+              marginBottom: 24,
+            }}
+          >
+            {t('subscription.renewsOn', { date: formatExpirationDate(expirationDate) })}
+          </Text>
         )}
 
         {!isSubscribed && <View style={{ height: 24 }} />}
@@ -120,7 +145,7 @@ export default function PremiumScreen() {
               <Icon name="check" size={18} color={colors.safe} />
               <Text
                 style={{
-                  fontFamily: 'NunitoSans_400Regular',
+                  fontFamily: 'Inter_400Regular',
                   fontSize: 16,
                   color: colors.foreground,
                 }}
@@ -131,42 +156,44 @@ export default function PremiumScreen() {
           ))}
         </View>
 
-        {/* Pricing or Manage */}
+        {/* Actions */}
         {isSubscribed ? (
           <View style={{ width: '100%', gap: 12 }}>
             <Button
               onPress={handleManageSubscription}
               size="lg"
               className="w-full"
-              isDisabled={isLoading !== null}
+              isDisabled={isLoading}
             >
               <Button.Label>
-                {isLoading === 'portal' ? t('common.loading') : t('subscription.manageSubscription')}
+                {isManagementLoading ? t('common.loading') : t('subscription.manageSubscription')}
               </Button.Label>
             </Button>
           </View>
         ) : (
           <View style={{ width: '100%', gap: 12 }}>
+            {/* Subscribe button - opens RevenueCat native paywall */}
             <Button
-              onPress={() => handleSubscribe('monthly')}
+              onPress={handleSubscribe}
               size="lg"
               className="w-full"
-              isDisabled={isLoading !== null}
+              isDisabled={isLoading}
             >
               <Button.Label>
-                {isLoading === 'monthly' ? t('common.loading') : t('premium.monthly')}
+                {isCheckoutLoading ? t('common.loading') : t('premium.subscribe')}
               </Button.Label>
             </Button>
 
+            {/* Restore purchases */}
             <Button
-              onPress={() => handleSubscribe('yearly')}
+              onPress={handleRestorePurchases}
               variant="secondary"
               size="lg"
               className="w-full"
-              isDisabled={isLoading !== null}
+              isDisabled={isLoading}
             >
               <Button.Label>
-                {isLoading === 'yearly' ? t('common.loading') : t('premium.yearly')}
+                {isRestoring ? t('common.loading') : t('subscription.restorePurchases')}
               </Button.Label>
             </Button>
           </View>
@@ -175,15 +202,14 @@ export default function PremiumScreen() {
         {/* Footer */}
         <Text
           style={{
-            fontFamily: 'NunitoSans_400Regular',
+            fontFamily: 'Inter_400Regular',
             fontSize: 12,
             color: colors.mutedForeground,
             textAlign: 'center',
             marginTop: 24,
           }}
         >
-          {t('premium.cancelAnytime')}{'\n'}
-          {t('premium.processedBy')}
+          {t('premium.cancelAnytime')}
         </Text>
       </ScrollView>
     </SafeAreaView>

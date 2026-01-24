@@ -1,8 +1,5 @@
-import { polarClient } from "@polar-sh/better-auth";
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-  plugins: [
-    polarClient(),
-  ],
+  // Note: Subscriptions are now handled via RevenueCat SDK on the mobile app
 });

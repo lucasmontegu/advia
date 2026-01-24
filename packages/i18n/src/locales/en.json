@@ -147,7 +147,7 @@
     "monthly": "$4.99/month",
     "yearly": "$39.99/year (save 33%)",
     "cancelAnytime": "Cancel anytime",
-    "processedBy": "Payment processed by Polar"
+    "processedBy": "Secure payment via App Store"
   },
   "loginIncentive": {
     "title": "Save your data",
@@ -246,5 +246,53 @@
     "temperature": "Temperature",
     "risk": "Risk level",
     "loading": "Loading weather data"
+  },
+  "onboarding": {
+    "hook": {
+      "text": "Every year, 1.3 million people die in road accidents. Many could be prevented with better information."
+    },
+    "promise": {
+      "title": "Meet your AI co-pilot",
+      "subtitle": "I watch the weather, so you can focus on the road."
+    },
+    "personalization": {
+      "title": "What kind of trips do you usually take?",
+      "options": {
+        "commute": "Daily commute",
+        "roadTrips": "Road trips",
+        "business": "Business travel",
+        "longHaul": "Long-haul driving"
+      }
+    },
+    "demo": {
+      "title": "See how I protect you",
+      "aiMessage": "Storm detected at km 120. I found a safe stop 15 minutes before—a gas station with shelter.",
+      "routeLabel": "Your City → Beach Town"
+    },
+    "signup": {
+      "title": "Ready to drive safer?",
+      "cta": "Create Free Account",
+      "guest": "Continue as guest",
+      "socialProof": "Join {{count}}+ drivers staying safe"
+    },
+    "skip": "Skip",
+    "next": "Next"
+  },
+  "safetyStatus": {
+    "safe": "Clear conditions until {{time}}",
+    "caution": "Light rain expected",
+    "warning": "Storm approaching—tap for details",
+    "danger": "Severe weather alert active",
+    "tapToExpand": "Tap for details",
+    "alertDescription": "Weather alert in your area",
+    "allClear": "No weather alerts in your area. Safe conditions for driving.",
+    "viewOnMap": "View on map",
+    "setAlert": "Set alert"
+  },
+  "aiCopilot": {
+    "greeting": "Hi! I'm your co-pilot. Tell me where you're going and I'll find the safest route.",
+    "planFirstTrip": "Plan my first trip",
+    "listening": "Listening...",
+    "thinking": "Thinking..."
   }
 }

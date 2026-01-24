@@ -6,15 +6,6 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { organization } from "better-auth/plugins";
-import { polar, checkout, portal } from "@polar-sh/better-auth";
-import { Polar } from "@polar-sh/sdk";
-
-// Initialize Polar SDK client
-const polarClient = new Polar({
-  accessToken: env.POLAR_ACCESS_TOKEN,
-  server: env.NODE_ENV === "production" ? "production" : "sandbox",
-});
-
 
 export const auth = betterAuth({
   experimental: {
@@ -50,24 +41,6 @@ export const auth = betterAuth({
     }),
     nextCookies(),
     expo(),
-    polar({
-      client: polarClient,
-      createCustomerOnSignUp: true,
-      enableCustomerPortal: true,
-      use: [
-        checkout({
-          products: [
-            { productId: env.POLAR_MONTHLY_PRODUCT_ID, slug: "monthly" },
-            { productId: env.POLAR_YEARLY_PRODUCT_ID, slug: "yearly" },
-          ],
-          successUrl: "driwet://subscription/success",
-          authenticatedUsersOnly: true,
-        }),
-        portal(),
-      ],
-    }),
+    // Note: Subscriptions are now handled via RevenueCat SDK on the mobile app
   ],
 });
-
-// Export polar client for direct API access
-export { polarClient };

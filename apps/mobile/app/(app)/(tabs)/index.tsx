@@ -11,13 +11,16 @@ import { MapViewComponent, type WeatherAlert } from '@/components/map-view';
 import { ChatInput, type RouteLocation } from '@/components/chat-input';
 import { RouteChips } from '@/components/route-chips';
 import { SuggestionsSheet } from '@/components/suggestions-sheet';
-import { WeatherOverlay } from '@/components/weather/weather-overlay';
 import { UpcomingTripBanner } from '@/components/upcoming-trip-banner';
 import { TrialBanner, PaywallModal } from '@/components/subscription';
+import { SafetyStatusCard, AICopilotButton, EmptyState, type SafetyStatus, type AICopilotState } from '@/components/home';
 import { Icon } from '@/components/icons';
 import { useTranslation } from '@/lib/i18n';
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const HAS_PLANNED_TRIP_KEY = '@driwet/has-planned-trip';
 
 export default function MapScreen() {
   const colors = useThemeColors();
@@ -39,6 +42,39 @@ export default function MapScreen() {
   const [destination, setDestination] = useState<RouteLocation | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isChatLoading, setIsChatLoading] = useState(false);
+
+  // AI Copilot state
+  const [copilotState, setCopilotState] = useState<AICopilotState>('idle');
+  const [suggestionCount, setSuggestionCount] = useState(0);
+
+  // Empty state tracking - show when user hasn't planned any trip yet
+  const [hasPlannedTrip, setHasPlannedTrip] = useState<boolean | null>(null);
+
+  // Load hasPlannedTrip from AsyncStorage on mount
+  useEffect(() => {
+    const loadHasPlannedTrip = async () => {
+      try {
+        const value = await AsyncStorage.getItem(HAS_PLANNED_TRIP_KEY);
+        setHasPlannedTrip(value === 'true');
+      } catch (error) {
+        console.error('Failed to load hasPlannedTrip:', error);
+        setHasPlannedTrip(false); // Default to showing empty state on error
+      }
+    };
+    loadHasPlannedTrip();
+  }, []);
+
+  // Persist hasPlannedTrip changes to AsyncStorage
+  const markTripPlanned = useCallback(async () => {
+    try {
+      await AsyncStorage.setItem(HAS_PLANNED_TRIP_KEY, 'true');
+      setHasPlannedTrip(true);
+    } catch (error) {
+      console.error('Failed to save hasPlannedTrip:', error);
+      // Still update state even if storage fails
+      setHasPlannedTrip(true);
+    }
+  }, []);
 
   // Fetch alerts for current location
   const { data: alertsData } = useActiveAlerts(
@@ -63,6 +99,42 @@ export default function MapScreen() {
     polygon: alert.polygon,
   }));
 
+  // Determine safety status based on weather and alerts
+  const safetyStatus: SafetyStatus = useMemo(() => {
+    if (alerts.length === 0) return 'safe';
+
+    const hasExtreme = alerts.some((a) => a.severity === 'extreme');
+    const hasSevere = alerts.some((a) => a.severity === 'severe');
+    const hasModerate = alerts.some((a) => a.severity === 'moderate');
+
+    if (hasExtreme) return 'danger';
+    if (hasSevere) return 'warning';
+    if (hasModerate) return 'caution';
+    return 'safe';
+  }, [alerts]);
+
+  // Safety status message based on conditions
+  const safetyMessage = useMemo(() => {
+    if (safetyStatus === 'safe') {
+      return t('safetyStatus.safe', { time: '3 PM' });
+    }
+    if (safetyStatus === 'caution') {
+      return t('safetyStatus.caution');
+    }
+    if (safetyStatus === 'warning') {
+      return t('safetyStatus.warning');
+    }
+    return t('safetyStatus.danger');
+  }, [safetyStatus, t]);
+
+  // Detail message for expanded card
+  const safetyDetailMessage = useMemo(() => {
+    if (alerts.length > 0) {
+      return alerts[0].headline || t('safetyStatus.alertDescription');
+    }
+    return t('safetyStatus.allClear');
+  }, [alerts, t]);
+
   // Fetch route directions when origin and destination are set
   const { data: routeDirections, isLoading: directionsLoading } = useRouteDirections(
     origin?.coordinates ?? null,
@@ -76,8 +148,9 @@ export default function MapScreen() {
     // Show suggestions when route is complete
     if (newOrigin && newDestination) {
       setShowSuggestions(true);
+      markTripPlanned();
     }
-  }, []);
+  }, [markTripPlanned]);
 
   const handleClearRoute = useCallback(() => {
     setOrigin(null);
@@ -87,19 +160,42 @@ export default function MapScreen() {
 
   const handleChatSubmit = useCallback(async (message: string) => {
     setIsChatLoading(true);
+    setCopilotState('listening');
     try {
       // TODO: Integrate with chat API
       console.log('Chat message:', message);
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
+      setCopilotState('speaking');
+      await new Promise(resolve => setTimeout(resolve, 2000));
     } finally {
       setIsChatLoading(false);
+      setCopilotState('idle');
     }
   }, []);
 
   const handleToggleSuggestions = useCallback(() => {
     setShowSuggestions((prev) => !prev);
   }, []);
+
+  const handleCopilotPress = useCallback(() => {
+    // Open AI chat interface - for now, show suggestions
+    // TODO: Navigate to dedicated chat screen when implemented
+    setShowSuggestions(true);
+  }, []);
+
+  const handleCopilotLongPress = useCallback(() => {
+    // Start voice input
+    setCopilotState('listening');
+    // TODO: Implement voice recognition
+    setTimeout(() => setCopilotState('idle'), 3000);
+  }, []);
+
+  const handlePlanTrip = useCallback(() => {
+    // Focus on the chat input to plan a trip
+    // Mark that user has interacted with the app
+    markTripPlanned();
+  }, [markTripPlanned]);
 
   const hasRoute = origin && destination;
 
@@ -148,32 +244,14 @@ export default function MapScreen() {
             <UpcomingTripBanner onViewDetails={handleViewTripDetails} />
           </View>
 
-          {/* Weather Card - Floating top right (only when no route) */}
+          {/* Safety Status Card - New AI Co-Pilot feature */}
           {!hasRoute && (
-            <View
-              style={styles.weatherCardContainer}
-              accessible={true}
-              accessibilityRole="summary"
-              accessibilityLabel={
-                weatherData?.data
-                  ? `${t('weather.temperature')}: ${Math.round(weatherData.data.temperature)}°C, ${t('weather.risk')}: ${weatherData.data.roadRisk}`
-                  : t('weather.loading')
-              }
-            >
-              <WeatherOverlay
-                weather={weatherData?.data ? {
-                  temperature: weatherData.data.temperature,
-                  humidity: weatherData.data.humidity,
-                  windSpeed: weatherData.data.windSpeed,
-                  visibility: weatherData.data.visibility,
-                  precipitationIntensity: weatherData.data.precipitationIntensity,
-                  precipitationType: weatherData.data.precipitationType,
-                  roadRisk: weatherData.data.roadRisk,
-                } : null}
-                isLoading={weatherLoading}
-                showDetails={false}
-              />
-            </View>
+            <SafetyStatusCard
+              status={safetyStatus}
+              message={safetyMessage}
+              detailMessage={safetyDetailMessage}
+              temperature={weatherData?.data?.temperature}
+            />
           )}
 
           {/* Suggestions FAB - Only when route is set */}
@@ -191,6 +269,13 @@ export default function MapScreen() {
           )}
         </View>
 
+        {/* Empty State - shown for new users who haven't planned a trip yet */}
+        {hasPlannedTrip === false && !hasRoute && (
+          <View style={styles.emptyStateContainer}>
+            <EmptyState onPlanTrip={handlePlanTrip} />
+          </View>
+        )}
+
         {/* Bottom section - Chat Input and Route Chips */}
         <View style={styles.bottomSection} pointerEvents="box-none">
           {/* Route Chips - shown when route is active */}
@@ -206,8 +291,20 @@ export default function MapScreen() {
             </View>
           )}
 
+          {/* AI Copilot Button - Floating action button */}
+          {!showSuggestions && hasPlannedTrip === true && (
+            <View style={styles.copilotButtonContainer}>
+              <AICopilotButton
+                state={copilotState}
+                suggestionCount={suggestionCount}
+                onPress={handleCopilotPress}
+                onLongPress={handleCopilotLongPress}
+              />
+            </View>
+          )}
+
           {/* Chat Input - always visible (hidden when suggestions visible) */}
-          {!showSuggestions && (
+          {!showSuggestions && hasPlannedTrip === true && (
             <ChatInput
               origin={origin}
               destination={destination}
@@ -258,15 +355,9 @@ const styles = StyleSheet.create({
   bannerContainer: {
     marginBottom: 8,
   },
-  weatherCardContainer: {
-    position: 'absolute',
-    right: 16,
-    top: 70,
-    maxWidth: 120,
-  },
   suggestionsFab: {
     position: 'absolute',
-    top: 70,
+    top: 180,
     right: 16,
     flexDirection: 'row',
     alignItems: 'center',
@@ -284,6 +375,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_600SemiBold',
     fontSize: 14,
   },
+  emptyStateContainer: {
+    position: 'absolute',
+    top: '30%',
+    left: 0,
+    right: 0,
+  },
   bottomSection: {
     position: 'absolute',
     bottom: 0,
@@ -293,5 +390,11 @@ const styles = StyleSheet.create({
   routeChipsContainer: {
     paddingHorizontal: 16,
     marginBottom: 8,
+  },
+  copilotButtonContainer: {
+    position: 'absolute',
+    bottom: 100,
+    right: 16,
+    zIndex: 10,
   },
 });

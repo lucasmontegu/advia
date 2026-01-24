@@ -282,6 +282,11 @@ PODS:
     - MapboxCommon (= 24.16.6)
     - MapboxCoreMaps (= 11.16.6)
     - Turf (= 4.0.0)
+  - PurchasesHybridCommon (17.28.0):
+    - RevenueCat (= 5.55.1)
+  - PurchasesHybridCommonUI (17.28.0):
+    - PurchasesHybridCommon (= 17.28.0)
+    - RevenueCatUI (= 5.55.1)
   - RCTDeprecation (0.81.5)
   - RCTRequired (0.81.5)
   - RCTTypeSafety (0.81.5):
@@ -2025,6 +2030,9 @@ PODS:
     - React-utils (= 0.81.5)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.81.5)
+  - RevenueCat (5.55.1)
+  - RevenueCatUI (5.55.1):
+    - RevenueCat (= 5.55.1)
   - RNCAsyncStorage (2.2.0):
     - hermes-engine
     - RCTRequired
@@ -2096,6 +2104,12 @@ PODS:
     - ReactNativeDependencies
     - Turf
     - Yoga
+  - RNPaywalls (9.7.1):
+    - PurchasesHybridCommonUI (= 17.28.0)
+    - React-Core
+  - RNPurchases (9.7.1):
+    - PurchasesHybridCommon (= 17.28.0)
+    - React-Core
   - RNReanimated (4.1.6):
     - hermes-engine
     - RCTRequired
@@ -2441,6 +2455,8 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@2.2.0_react-native@0.81.5_@babel+core@7.28.6__ce3c4972004f3d6791573ec5b64bee38/node_modules/@react-native-async-storage/async-storage`)"
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-native@0.81.5_@babel+core@7.28.6_@types+react_d46c38bfd6a30a92726fb77a1f1e6887/node_modules/react-native-gesture-handler`)"
   - "rnmapbox-maps (from `../../../node_modules/.pnpm/@rnmapbox+maps@10.2.10_expo@54.0.32_react-dom@19.1.0_react@19.1.0__react-native@0.81.5__9835e6256bf037f4fc0c88860947f753/node_modules/@rnmapbox/maps`)"
+  - "RNPaywalls (from `../../../node_modules/.pnpm/react-native-purchases-ui@9.7.1_react-native-purchases@9.7.1_react-native-web@0.21.2_re_9a69a7d1d2421cf9d2d21aa76c243adf/node_modules/react-native-purchases-ui`)"
+  - "RNPurchases (from `../../../node_modules/.pnpm/react-native-purchases@9.7.1_react-native-web@0.21.2_react-dom@19.1.0_react@19.1.0__rea_0f12debf8e2ff8f79c9d7c81e2b22901/node_modules/react-native-purchases`)"
   - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.1.6_@babel+core@7.28.6_react-native-worklets@0.5.1_@babel+cor_c7c888bd389fb93c9cfe2d3c1c8b0777/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@4.16.0_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/react-native-screens`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@15.12.1_react-native@0.81.5_@babel+core@7.28.6_@types+react@19.1.17_react@19.1.0__react@19.1.0/node_modules/react-native-svg`)"
@@ -2453,6 +2469,10 @@ SPEC REPOS:
     - MapboxCommon
     - MapboxCoreMaps
     - MapboxMaps
+    - PurchasesHybridCommon
+    - PurchasesHybridCommonUI
+    - RevenueCat
+    - RevenueCatUI
     - Turf
 
 EXTERNAL SOURCES:
@@ -2661,6 +2681,10 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-gesture-handler@2.28.0_react-native@0.81.5_@babel+core@7.28.6_@types+react_d46c38bfd6a30a92726fb77a1f1e6887/node_modules/react-native-gesture-handler"
   rnmapbox-maps:
     :path: "../../../node_modules/.pnpm/@rnmapbox+maps@10.2.10_expo@54.0.32_react-dom@19.1.0_react@19.1.0__react-native@0.81.5__9835e6256bf037f4fc0c88860947f753/node_modules/@rnmapbox/maps"
+  RNPaywalls:
+    :path: "../../../node_modules/.pnpm/react-native-purchases-ui@9.7.1_react-native-purchases@9.7.1_react-native-web@0.21.2_re_9a69a7d1d2421cf9d2d21aa76c243adf/node_modules/react-native-purchases-ui"
+  RNPurchases:
+    :path: "../../../node_modules/.pnpm/react-native-purchases@9.7.1_react-native-web@0.21.2_react-dom@19.1.0_react@19.1.0__rea_0f12debf8e2ff8f79c9d7c81e2b22901/node_modules/react-native-purchases"
   RNReanimated:
     :path: "../../../node_modules/.pnpm/react-native-reanimated@4.1.6_@babel+core@7.28.6_react-native-worklets@0.5.1_@babel+cor_c7c888bd389fb93c9cfe2d3c1c8b0777/node_modules/react-native-reanimated"
   RNScreens:
@@ -2711,6 +2735,8 @@ SPEC CHECKSUMS:
   MapboxCommon: 10cbf74edb23c9abcfe2424899d804f288a47334
   MapboxCoreMaps: f19680d20681797067268284b2292349de861730
   MapboxMaps: 04c7bf46d66265ad0f4b98484a251777a926c423
+  PurchasesHybridCommon: c2f8f5fcd2e472c585fccd1ab2fe317a3dc1171e
+  PurchasesHybridCommonUI: 81113f049b6a618e06e38e6f1510c6c7654435f9
   RCTDeprecation: 943572d4be82d480a48f4884f670135ae30bf990
   RCTRequired: 8f3cfc90cc25cf6e420ddb3e7caaaabc57df6043
   RCTTypeSafety: 16a4144ca3f959583ab019b57d5633df10b5e97c
@@ -2777,9 +2803,13 @@ SPEC CHECKSUMS:
   ReactCodegen: d680d1777f62efe816ea10f9c60fd38327c0a65c
   ReactCommon: 08810150b1206cc44aecf5f6ae19af32f29151a8
   ReactNativeDependencies: 71ce9c28beb282aa720ea7b46980fff9669f428a
+  RevenueCat: 347221fad5ab0ed5636546867deae2c32c64749f
+  RevenueCatUI: 5b8e20f13156e85efcfa1ad03d1aadc08cd9af2c
   RNCAsyncStorage: 3a4f5e2777dae1688b781a487923a08569e27fe4
   RNGestureHandler: 2914750df066d89bf9d8f48a10ad5f0051108ac3
   rnmapbox-maps: 6135ab50fda2676f742555f210d1e1657a5b6378
+  RNPaywalls: 8c86e83105695edda21839ed52a7e1ff7f66d34b
+  RNPurchases: e265e2ed27349b567b91b89d8712aa8c9c57f5b0
   RNReanimated: 93add16a4254bb6c16bb54ec09cbf2d81ac74793
   RNScreens: d8d6f1792f6e7ac12b0190d33d8d390efc0c1845
   RNSVG: 31d6639663c249b7d5abc9728dde2041eb2a3c34

@@ -15,4 +15,4 @@ catalog:
   dotenv: ^17.2.2
   next: ^16.1.4
   typescript: ^5
-  zod: 'catalog:'
+  zod: '4.1.13'

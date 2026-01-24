@@ -147,7 +147,7 @@
     "monthly": "$4.99/mes",
     "yearly": "$39.99/año (ahorra 33%)",
     "cancelAnytime": "Cancela cuando quieras",
-    "processedBy": "Pago procesado por Polar"
+    "processedBy": "Pago seguro a través de App Store"
   },
   "loginIncentive": {
     "title": "Guarda tus datos",
@@ -246,5 +246,53 @@
     "temperature": "Temperatura",
     "risk": "Nivel de riesgo",
     "loading": "Cargando datos del clima"
+  },
+  "onboarding": {
+    "hook": {
+      "text": "Cada año, 1.3 millones de personas mueren en accidentes de tránsito. Muchos podrían prevenirse con mejor información."
+    },
+    "promise": {
+      "title": "Conoce a tu co-piloto IA",
+      "subtitle": "Yo vigilo el clima, para que tú te concentres en el camino."
+    },
+    "personalization": {
+      "title": "¿Qué tipo de viajes sueles hacer?",
+      "options": {
+        "commute": "Viaje diario al trabajo",
+        "roadTrips": "Viajes por carretera",
+        "business": "Viajes de negocios",
+        "longHaul": "Viajes de larga distancia"
+      }
+    },
+    "demo": {
+      "title": "Mira cómo te protejo",
+      "aiMessage": "Tormenta detectada en el km 120. Encontré una parada segura 15 minutos antes—una gasolinera con refugio.",
+      "routeLabel": "Tu Ciudad → Playa"
+    },
+    "signup": {
+      "title": "¿Listo para manejar más seguro?",
+      "cta": "Crear Cuenta Gratis",
+      "guest": "Continuar como invitado",
+      "socialProof": "Únete a {{count}}+ conductores seguros"
+    },
+    "skip": "Saltar",
+    "next": "Siguiente"
+  },
+  "safetyStatus": {
+    "safe": "Condiciones despejadas hasta las {{time}}",
+    "caution": "Lluvia ligera esperada",
+    "warning": "Tormenta acercándose—toca para detalles",
+    "danger": "Alerta de clima severo activa",
+    "tapToExpand": "Toca para ver detalles",
+    "alertDescription": "Alerta meteorológica en tu zona",
+    "allClear": "Sin alertas meteorológicas en tu zona. Condiciones seguras para conducir.",
+    "viewOnMap": "Ver en mapa",
+    "setAlert": "Crear alerta"
+  },
+  "aiCopilot": {
+    "greeting": "¡Hola! Soy tu co-piloto. Dime a dónde vas y encontraré la ruta más segura.",
+    "planFirstTrip": "Planear mi primer viaje",
+    "listening": "Escuchando...",
+    "thinking": "Pensando..."
   }
 }

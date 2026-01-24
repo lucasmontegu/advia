@@ -68,6 +68,37 @@ export const colors = {
     moderate: '#F59E0B',
     minor: '#22C55E',
   },
+  // Safety status colors (used for Safety Status Card)
+  safety: {
+    safe: {
+      bg: '#ECFDF5',
+      bgDark: '#064E3B',
+      text: '#065F46',
+      textDark: '#6EE7B7',
+      icon: '#10B981',
+    },
+    caution: {
+      bg: '#FFFBEB',
+      bgDark: '#78350F',
+      text: '#92400E',
+      textDark: '#FDE68A',
+      icon: '#F59E0B',
+    },
+    warning: {
+      bg: '#FFF7ED',
+      bgDark: '#7C2D12',
+      text: '#9A3412',
+      textDark: '#FDBA74',
+      icon: '#F97316',
+    },
+    danger: {
+      bg: '#FEF2F2',
+      bgDark: '#7F1D1D',
+      text: '#991B1B',
+      textDark: '#FCA5A5',
+      icon: '#EF4444',
+    },
+  },
   // Legacy shared colors (for backwards compatibility)
   safe: '#10B981',
   warning: '#F59E0B',
