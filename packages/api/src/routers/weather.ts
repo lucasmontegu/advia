@@ -433,6 +433,11 @@ export const weatherRouter = {
     .handler(async ({ input }) => {
       let region;
 
+      // Validate that lat and lng are provided together
+      if ((input?.lat === undefined) !== (input?.lng === undefined)) {
+        throw new Error("lat and lng must be provided together");
+      }
+
       if (input?.lat !== undefined && input?.lng !== undefined) {
         region = detectRegion({ lat: input.lat, lng: input.lng });
       } else if (input?.countryCode) {

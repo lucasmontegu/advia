@@ -90,6 +90,7 @@ export function ChatInputField({
     );
     return {
       borderWidth,
+      borderColor: focusProgress.value > 0.5 ? colors.primary : colors.border,
     };
   });
 
@@ -104,7 +105,6 @@ export function ChatInputField({
           containerAnimatedStyle,
           {
             backgroundColor: colors.muted,
-            borderColor: focusProgress.value > 0 ? colors.primary : colors.border,
           },
         ]}
       >

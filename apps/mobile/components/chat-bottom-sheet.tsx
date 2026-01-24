@@ -163,6 +163,7 @@ export function ChatBottomSheet() {
           role: 'assistant' as const,
           content: streamingContent,
           isStreaming: true,
+          timestamp: new Date(),
         },
       ];
     }

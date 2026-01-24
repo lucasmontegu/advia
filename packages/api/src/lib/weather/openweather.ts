@@ -205,13 +205,16 @@ class OpenWeatherProvider implements IWeatherProvider {
     points: Array<{ lat: number; lng: number; km: number }>
   ): Promise<RouteAnalysisResponse> {
     const { exceeded, remaining } = await checkApiLimit("openweather", DAILY_LIMIT);
-    if (exceeded) {
+    if (exceeded || remaining < 2) {
       throw new Error("OpenWeather daily API limit exceeded");
     }
 
     // Limit points to avoid excessive API usage (2 calls per point: current + forecast)
     const maxPoints = Math.min(points.length, Math.floor(remaining / 2), 10);
-    const step = Math.ceil(points.length / maxPoints);
+    if (maxPoints <= 0) {
+      throw new Error("OpenWeather API limit too low for route analysis");
+    }
+    const step = Math.max(1, Math.ceil(points.length / maxPoints));
     const sampledPoints = points.filter((_, i) => i % step === 0);
 
     const segments: Array<{
