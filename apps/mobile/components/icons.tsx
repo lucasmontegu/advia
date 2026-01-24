@@ -39,6 +39,8 @@ import {
   Store01Icon,
   Navigation03Icon,
   ShieldUserIcon,
+  Copy01Icon,
+  CloudIcon,
 } from '@hugeicons/core-free-icons';
 import { useThemeColors } from '@/hooks/use-theme-colors';
 
@@ -69,6 +71,7 @@ export type IconName =
   | 'alert'
   | 'lock'
   | 'trash'
+  | 'delete'
   | 'info'
   | 'refresh'
   | 'weather'
@@ -81,7 +84,9 @@ export type IconName =
   | 'parking'
   | 'store'
   | 'navigation'
-  | 'shield';
+  | 'shield'
+  | 'copy'
+  | 'rain';
 
 const iconMap = {
   map: MapsIcon,
@@ -110,6 +115,7 @@ const iconMap = {
   alert: Alert01Icon,
   lock: LockIcon,
   trash: Delete02Icon,
+  delete: Delete02Icon,
   info: InformationCircleIcon,
   refresh: Refresh01Icon,
   weather: SunCloud01Icon,
@@ -123,6 +129,8 @@ const iconMap = {
   store: Store01Icon,
   navigation: Navigation03Icon,
   shield: ShieldUserIcon,
+  copy: Copy01Icon,
+  rain: CloudIcon,
 } as const;
 
 interface IconProps {

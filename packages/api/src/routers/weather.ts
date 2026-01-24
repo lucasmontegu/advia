@@ -8,24 +8,22 @@ import {
   type AlertType,
 } from "@driwet/db/schema/index";
 import { eq, and, gt } from "drizzle-orm";
-import { protectedProcedure } from "../index";
+import { protectedProcedure, publicProcedure } from "../index";
 import {
-  tomorrowClient,
+  weatherFactory,
   getCacheTTL,
-  checkApiLimit,
-} from "../lib/tomorrow-io";
+  getGridCoords,
+  detectRegion,
+  getRegionPricing,
+  formatPrice,
+  getYearlySavingsPercentage,
+  getAllPricingOptions,
+  getRegionFromCountryCode,
+} from "../lib/weather";
 
 // Helper to generate IDs
 function generateId(): string {
   return crypto.randomUUID();
-}
-
-// Get grid coordinates for cache lookup
-function getGridCoords(lat: number, lng: number) {
-  return {
-    gridLat: (Math.round(lat * 100) / 100).toString(),
-    gridLng: (Math.round(lng * 100) / 100).toString(),
-  };
 }
 
 export const weatherRouter = {
@@ -63,8 +61,8 @@ export const weatherRouter = {
         };
       }
 
-      // Fetch from Tomorrow.io
-      const { current } = await tomorrowClient.getTimelines(lat, lng, {
+      // Fetch from best available provider
+      const { current, provider } = await weatherFactory.getTimelines(lat, lng, {
         hours: 1,
       });
 
@@ -79,13 +77,14 @@ export const weatherRouter = {
           latitude: gridLat,
           longitude: gridLng,
           data: current,
-          source: "tomorrow",
+          source: provider,
           expiresAt,
         })
         .onConflictDoUpdate({
           target: weatherCache.id,
           set: {
             data: current,
+            source: provider,
             fetchedAt: new Date(),
             expiresAt,
           },
@@ -93,7 +92,7 @@ export const weatherRouter = {
 
       return {
         data: current,
-        source: "tomorrow" as const,
+        source: provider,
         cached: false,
         fetchedAt: new Date(),
       };
@@ -111,13 +110,16 @@ export const weatherRouter = {
     .handler(async ({ input }) => {
       const { lat, lng, hours } = input;
 
-      const { current, hourly } = await tomorrowClient.getTimelines(lat, lng, {
-        hours,
-      });
+      const { current, hourly, provider } = await weatherFactory.getTimelines(
+        lat,
+        lng,
+        { hours }
+      );
 
       return {
         current,
         hourly,
+        provider,
         fetchedAt: new Date(),
       };
     }),
@@ -135,10 +137,10 @@ export const weatherRouter = {
       const { lat, lng, radiusKm } = input;
       const userId = context.session.user.id;
 
-      // Fetch alerts from Tomorrow.io
-      const events = await tomorrowClient.getEvents(lat, lng, radiusKm);
+      // Fetch alerts using factory (automatically uses provider with alerts support)
+      const events = await weatherFactory.getEvents(lat, lng, radiusKm);
 
-      // Map severity from Tomorrow.io to our format
+      // Map severity from providers to our format
       const severityMap: Record<string, "minor" | "moderate" | "severe" | "extreme"> = {
         minor: "minor",
         moderate: "moderate",
@@ -146,7 +148,7 @@ export const weatherRouter = {
         extreme: "extreme",
       };
 
-      // Map Tomorrow.io event types to our alert types
+      // Map event types to our alert types
       const alertTypeMap: Record<string, AlertType> = {
         fires: "other",
         wind: "extreme_wind",
@@ -177,7 +179,7 @@ export const weatherRouter = {
               severity,
               title: event.title,
               description: event.description,
-              source: "tomorrow",
+              source: "tomorrow", // Events currently only from Tomorrow.io
               latitude: lat.toString(),
               longitude: lng.toString(),
               startsAt: event.startTime ? new Date(event.startTime) : null,
@@ -224,25 +226,39 @@ export const weatherRouter = {
             lng: z.number(),
           })
           .optional(),
+        // Use hybrid mode to split across providers
+        useHybrid: z.boolean().default(false),
       })
     )
     .handler(async ({ input, context }) => {
-      const { polyline, savedRouteId, origin, destination } = input;
+      const { polyline, savedRouteId, origin, destination, useHybrid } = input;
       const userId = context.session.user.id;
 
-      // Decode polyline to points (simplified - you may want to use @mapbox/polyline)
-      // For now, if origin/destination provided, sample points along the line
+      // Build points array
       let points: Array<{ lat: number; lng: number; km: number }> = [];
 
       if (origin && destination) {
         // Simple linear interpolation for demo - in production use actual route
         const numPoints = 10;
+        // Calculate approximate distance (haversine simplified)
+        const R = 6371; // Earth's radius in km
+        const dLat = ((destination.lat - origin.lat) * Math.PI) / 180;
+        const dLng = ((destination.lng - origin.lng) * Math.PI) / 180;
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos((origin.lat * Math.PI) / 180) *
+            Math.cos((destination.lat * Math.PI) / 180) *
+            Math.sin(dLng / 2) *
+            Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const totalDistance = R * c;
+
         for (let i = 0; i <= numPoints; i++) {
           const ratio = i / numPoints;
           points.push({
             lat: origin.lat + (destination.lat - origin.lat) * ratio,
             lng: origin.lng + (destination.lng - origin.lng) * ratio,
-            km: Math.round(ratio * 100), // Approximate
+            km: Math.round(ratio * totalDistance),
           });
         }
       } else if (polyline) {
@@ -254,13 +270,27 @@ export const weatherRouter = {
         ];
       }
 
-      // Analyze weather along route
-      const { segments, overallRisk } = await tomorrowClient.analyzeRoute(points);
+      // Analyze using factory (hybrid or single provider)
+      let segments: Array<{ km: number; lat: number; lng: number; weather: WeatherData }>;
+      let overallRisk: "low" | "moderate" | "high" | "extreme";
+      let usedProviders: string[];
+
+      if (useHybrid) {
+        const result = await weatherFactory.analyzeRouteHybrid(points);
+        segments = result.segments;
+        overallRisk = result.overallRisk;
+        usedProviders = result.providers;
+      } else {
+        const result = await weatherFactory.analyzeRoute(points);
+        segments = result.segments;
+        overallRisk = result.overallRisk;
+        usedProviders = [result.provider];
+      }
 
       // Get alerts along the route
-      const alertsPromises = points.map((point) =>
-        tomorrowClient.getEvents(point.lat, point.lng, 20)
-      );
+      const alertsPromises = points
+        .filter((_, i) => i % 3 === 0) // Sample every 3rd point for alerts
+        .map((point) => weatherFactory.getEvents(point.lat, point.lng, 20));
       const alertsResults = await Promise.all(alertsPromises);
       const uniqueAlerts = new Map();
       alertsResults.flat().forEach((alert) => {
@@ -277,7 +307,9 @@ export const weatherRouter = {
         id: analysisId,
         userId,
         savedRouteId: savedRouteId || null,
-        polyline: polyline || `${origin?.lat},${origin?.lng}-${destination?.lat},${destination?.lng}`,
+        polyline:
+          polyline ||
+          `${origin?.lat},${origin?.lng}-${destination?.lat},${destination?.lng}`,
         segments,
         overallRisk,
         alerts: Array.from(uniqueAlerts.values()),
@@ -289,6 +321,7 @@ export const weatherRouter = {
         segments,
         overallRisk,
         alerts: Array.from(uniqueAlerts.values()),
+        providers: usedProviders,
         validUntil,
         analyzedAt: new Date(),
       };
@@ -309,7 +342,7 @@ export const weatherRouter = {
       const { currentLat, currentLng, destinationLat, destinationLng } = input;
 
       // Get current weather at driver's location
-      const { current } = await tomorrowClient.getTimelines(
+      const { current, provider } = await weatherFactory.getTimelines(
         currentLat,
         currentLng,
         { hours: 3 }
@@ -334,7 +367,7 @@ export const weatherRouter = {
       const aheadWeather: Array<{ km: number; weather: WeatherData }> = [];
       for (const point of aheadPoints.slice(1)) {
         try {
-          const { current: pointWeather } = await tomorrowClient.getTimelines(
+          const { current: pointWeather } = await weatherFactory.getTimelines(
             point.lat,
             point.lng,
             { hours: 1 }
@@ -346,24 +379,27 @@ export const weatherRouter = {
       }
 
       // Get alerts in the area
-      const alerts = await tomorrowClient.getEvents(currentLat, currentLng, 30);
+      const alerts = await weatherFactory.getEvents(currentLat, currentLng, 30);
 
       // Calculate recommended update interval
       const hasHighRisk =
         current.roadRisk === "high" ||
         current.roadRisk === "extreme" ||
         aheadWeather.some(
-          (w) => w.weather.roadRisk === "high" || w.weather.roadRisk === "extreme"
+          (w) =>
+            w.weather.roadRisk === "high" || w.weather.roadRisk === "extreme"
         );
 
-      const nextUpdateMs = hasHighRisk || alerts.length > 0
-        ? 3 * 60 * 1000 // 3 minutes
-        : 15 * 60 * 1000; // 15 minutes
+      const nextUpdateMs =
+        hasHighRisk || alerts.length > 0
+          ? 3 * 60 * 1000 // 3 minutes
+          : 15 * 60 * 1000; // 15 minutes
 
       return {
         current,
         ahead: aheadWeather,
         alerts,
+        provider,
         nextUpdateMs,
         fetchedAt: new Date(),
       };
@@ -371,14 +407,83 @@ export const weatherRouter = {
 
   // Get API usage stats (for monitoring)
   getUsageStats: protectedProcedure.handler(async () => {
-    const { remaining, exceeded } = await checkApiLimit();
+    const providersStatus = await weatherFactory.getProvidersStatus();
+    const totalRemaining = await weatherFactory.getTotalRemainingCalls();
     const today = new Date().toISOString().split("T")[0];
 
     return {
       date: today,
-      remaining,
-      exceeded,
-      dailyLimit: 500,
+      providers: providersStatus,
+      totalRemaining,
+      totalDailyLimit: providersStatus.reduce((sum, p) => sum + p.dailyLimit, 0),
     };
+  }),
+
+  // Get pricing for user's region
+  getPricing: publicProcedure
+    .input(
+      z
+        .object({
+          lat: z.number().min(-90).max(90).optional(),
+          lng: z.number().min(-180).max(180).optional(),
+          countryCode: z.string().length(2).optional(),
+        })
+        .optional()
+    )
+    .handler(async ({ input }) => {
+      let region;
+
+      // Validate that lat and lng are provided together
+      if ((input?.lat === undefined) !== (input?.lng === undefined)) {
+        throw new Error("lat and lng must be provided together");
+      }
+
+      if (input?.lat !== undefined && input?.lng !== undefined) {
+        region = detectRegion({ lat: input.lat, lng: input.lng });
+      } else if (input?.countryCode) {
+        region = getRegionFromCountryCode(input.countryCode);
+      } else {
+        // Default to South America (app's primary market)
+        region = "south_america" as const;
+      }
+
+      const pricing = getRegionPricing(region);
+      const yearlySavings = getYearlySavingsPercentage(region);
+
+      return {
+        region,
+        pricing: {
+          monthly: {
+            priceInCents: pricing.monthlyPrice,
+            formatted: formatPrice(pricing.monthlyPrice, pricing.currency),
+          },
+          yearly: {
+            priceInCents: pricing.yearlyPrice,
+            formatted: formatPrice(pricing.yearlyPrice, pricing.currency),
+            savingsPercentage: yearlySavings,
+          },
+        },
+        currency: pricing.currency,
+        currencySymbol: pricing.currencySymbol,
+      };
+    }),
+
+  // Get all pricing options (for admin/comparison)
+  getAllPricing: publicProcedure.handler(async () => {
+    const allPricing = getAllPricingOptions();
+
+    return allPricing.map((pricing) => ({
+      region: pricing.region,
+      monthly: {
+        priceInCents: pricing.monthlyPrice,
+        formatted: formatPrice(pricing.monthlyPrice, pricing.currency),
+      },
+      yearly: {
+        priceInCents: pricing.yearlyPrice,
+        formatted: formatPrice(pricing.yearlyPrice, pricing.currency),
+        savingsPercentage: getYearlySavingsPercentage(pricing.region),
+      },
+      currency: pricing.currency,
+    }));
   }),
 };
