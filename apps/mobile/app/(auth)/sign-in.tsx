@@ -9,7 +9,7 @@ import { useTranslation } from '@/lib/i18n';
 import { useTrialStore } from '@/stores/trial-store';
 import { Analytics, identifyUser } from '@/lib/analytics';
 import { queryClient } from '@/lib/query-client';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function SignInScreen() {
   const router = useRouter();
@@ -17,40 +17,51 @@ export default function SignInScreen() {
   const { t } = useTranslation();
   const { startTrial, trialStartDate } = useTrialStore();
   const [isLoading, setIsLoading] = useState<'google' | 'apple' | null>(null);
+  const { data: session } = authClient.useSession();
+  const pendingAuthMethod = useRef<'google' | 'apple' | null>(null);
+  const hasHandledAuth = useRef(false);
 
-  // Start trial for new users after successful auth
-  const onAuthSuccess = async (method: 'google' | 'apple' | 'email') => {
-    const isNewUser = !trialStartDate;
-    if (isNewUser) {
-      startTrial();
-      Analytics.signUp(method);
-    } else {
-      Analytics.signIn(method);
-    }
+  // Handle successful OAuth authentication
+  // This runs when the session changes after OAuth redirect
+  useEffect(() => {
+    if (session?.user && pendingAuthMethod.current && !hasHandledAuth.current) {
+      hasHandledAuth.current = true;
+      const method = pendingAuthMethod.current;
 
-    // Get session and identify user for analytics
-    const session = await authClient.getSession();
-    if (session.data?.user) {
-      identifyUser(session.data.user.id, {
-        email: session.data.user.email ?? null,
-        name: session.data.user.name ?? null,
+      // Start trial for new users
+      const isNewUser = !trialStartDate;
+      if (isNewUser) {
+        startTrial();
+        Analytics.signUp(method);
+      } else {
+        Analytics.signIn(method);
+      }
+
+      // Identify user for analytics
+      identifyUser(session.user.id, {
+        email: session.user.email ?? null,
+        name: session.user.name ?? null,
+      });
+
+      // Invalidate queries and navigate
+      queryClient.invalidateQueries().then(() => {
+        router.replace('/(app)/(tabs)');
       });
     }
-
-    // Invalidate all queries so they refetch with the new auth token
-    await queryClient.invalidateQueries();
-
-    router.replace('/(app)/(tabs)');
-  };
+  }, [session, trialStartDate, startTrial, router]);
 
   const handleGoogleSignIn = async () => {
     setIsLoading('google');
+    pendingAuthMethod.current = 'google';
+    hasHandledAuth.current = false;
     try {
+      // This opens the browser for OAuth - doesn't wait for completion
       await authClient.signIn.social({ provider: 'google' });
-      await onAuthSuccess('google');
+      // The useEffect above will handle the rest when session updates
     } catch (error) {
       console.error('Google sign-in error:', error);
       Analytics.errorOccurred('google_sign_in_failed', String(error));
+      pendingAuthMethod.current = null;
     } finally {
       setIsLoading(null);
     }
@@ -58,12 +69,16 @@ export default function SignInScreen() {
 
   const handleAppleSignIn = async () => {
     setIsLoading('apple');
+    pendingAuthMethod.current = 'apple';
+    hasHandledAuth.current = false;
     try {
+      // This opens the browser for OAuth - doesn't wait for completion
       await authClient.signIn.social({ provider: 'apple' });
-      await onAuthSuccess('apple');
+      // The useEffect above will handle the rest when session updates
     } catch (error) {
       console.error('Apple sign-in error:', error);
       Analytics.errorOccurred('apple_sign_in_failed', String(error));
+      pendingAuthMethod.current = null;
     } finally {
       setIsLoading(null);
     }

@@ -8,19 +8,39 @@ import { headers } from "next/headers";
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const plan = searchParams.get("plan") as "monthly" | "yearly";
+  const mobileToken = searchParams.get("token");
 
   if (!plan || !["monthly", "yearly"].includes(plan)) {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }
 
   try {
-    // Get current session
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    let session;
+
+    // If a mobile session token is provided, validate it
+    if (mobileToken) {
+      // Validate the session token from mobile app
+      session = await auth.api.getSession({
+        headers: new Headers({
+          Authorization: `Bearer ${mobileToken}`,
+        }),
+      });
+    } else {
+      // Fall back to cookie-based session for web
+      session = await auth.api.getSession({
+        headers: await headers(),
+      });
+    }
 
     if (!session?.user?.email) {
-      // Redirect to login if not authenticated
+      // If from mobile (has token param), return error instead of redirect
+      if (mobileToken) {
+        return NextResponse.json(
+          { error: "Session expired. Please sign in again." },
+          { status: 401 }
+        );
+      }
+      // Redirect to login for web users
       return NextResponse.redirect(
         new URL("/login?redirect=/api/subscription/checkout?plan=" + plan, request.url)
       );

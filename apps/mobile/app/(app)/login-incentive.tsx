@@ -7,21 +7,59 @@ import { useThemeColors } from '@/hooks/use-theme-colors';
 import { authClient } from '@/lib/auth-client';
 import { Icon } from '@/components/icons';
 import { useTranslation } from '@/lib/i18n';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useTrialStore } from '@/stores/trial-store';
+import { Analytics, identifyUser } from '@/lib/analytics';
+import { queryClient } from '@/lib/query-client';
 
 export default function LoginIncentiveModal() {
   const colors = useThemeColors();
   const router = useRouter();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<'google' | 'apple' | null>(null);
+  const { startTrial, trialStartDate } = useTrialStore();
+  const { data: session } = authClient.useSession();
+  const pendingAuthMethod = useRef<'google' | 'apple' | null>(null);
+  const hasHandledAuth = useRef(false);
+
+  // Handle successful OAuth authentication
+  useEffect(() => {
+    if (session?.user && pendingAuthMethod.current && !hasHandledAuth.current) {
+      hasHandledAuth.current = true;
+      const method = pendingAuthMethod.current;
+
+      // Start trial for new users
+      const isNewUser = !trialStartDate;
+      if (isNewUser) {
+        startTrial();
+        Analytics.signUp(method);
+      } else {
+        Analytics.signIn(method);
+      }
+
+      // Identify user for analytics
+      identifyUser(session.user.id, {
+        email: session.user.email ?? null,
+        name: session.user.name ?? null,
+      });
+
+      // Invalidate queries and close modal
+      queryClient.invalidateQueries().then(() => {
+        router.back();
+      });
+    }
+  }, [session, trialStartDate, startTrial, router]);
 
   const handleGoogleSignIn = async () => {
     setIsLoading('google');
+    pendingAuthMethod.current = 'google';
+    hasHandledAuth.current = false;
     try {
       await authClient.signIn.social({ provider: 'google' });
-      router.back();
+      // The useEffect above will handle the rest when session updates
     } catch (error) {
       console.error('Google sign-in error:', error);
+      pendingAuthMethod.current = null;
     } finally {
       setIsLoading(null);
     }
@@ -29,11 +67,14 @@ export default function LoginIncentiveModal() {
 
   const handleAppleSignIn = async () => {
     setIsLoading('apple');
+    pendingAuthMethod.current = 'apple';
+    hasHandledAuth.current = false;
     try {
       await authClient.signIn.social({ provider: 'apple' });
-      router.back();
+      // The useEffect above will handle the rest when session updates
     } catch (error) {
       console.error('Apple sign-in error:', error);
+      pendingAuthMethod.current = null;
     } finally {
       setIsLoading(null);
     }
