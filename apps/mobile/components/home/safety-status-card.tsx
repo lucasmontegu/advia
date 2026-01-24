@@ -1,16 +1,20 @@
 // apps/mobile/components/home/safety-status-card.tsx
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
+  withRepeat,
+  withSequence,
+  withDelay,
   interpolate,
   Extrapolation,
   runOnJS,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useThemeColors } from '@/hooks/use-theme-colors';
 import { useAppTheme } from '@/contexts/app-theme-context';
 import { useTranslation } from '@/lib/i18n';
@@ -66,6 +70,52 @@ export function SafetyStatusCard({
   // Animation values
   const expandProgress = useSharedValue(0);
   const translateY = useSharedValue(0);
+  const pulseScale = useSharedValue(1);
+  const pulseOpacity = useSharedValue(0);
+  const iconPulse = useSharedValue(1);
+
+  // Danger/warning pulse animation
+  useEffect(() => {
+    if (status === 'danger' || status === 'warning') {
+      // Outer pulse ring animation
+      pulseScale.value = withRepeat(
+        withSequence(
+          withTiming(1.5, { duration: 1000 }),
+          withTiming(1, { duration: 0 })
+        ),
+        -1
+      );
+      pulseOpacity.value = withRepeat(
+        withSequence(
+          withTiming(0.5, { duration: 0 }),
+          withTiming(0, { duration: 1000 })
+        ),
+        -1
+      );
+
+      // Icon subtle pulse
+      iconPulse.value = withRepeat(
+        withSequence(
+          withTiming(1.1, { duration: 500 }),
+          withTiming(1, { duration: 500 })
+        ),
+        -1
+      );
+    } else {
+      pulseScale.value = 1;
+      pulseOpacity.value = 0;
+      iconPulse.value = 1;
+    }
+  }, [status]);
+
+  const pulseRingStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pulseScale.value }],
+    opacity: pulseOpacity.value,
+  }));
+
+  const iconPulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: iconPulse.value }],
+  }));
 
   const toggleExpanded = useCallback(() => {
     const newExpanded = !isExpanded;
@@ -147,9 +197,21 @@ export function SafetyStatusCard({
         >
           {/* Main row - always visible */}
           <View style={styles.mainRow}>
-            {/* Status icon */}
-            <View style={[styles.iconContainer, { backgroundColor: iconColor + '20' }]}>
-              <Icon name={config.icon} size={22} color={iconColor} />
+            {/* Status icon with pulse effect for danger/warning */}
+            <View style={styles.iconWrapper}>
+              {/* Pulse ring animation for urgent states */}
+              {(status === 'danger' || status === 'warning') && (
+                <Animated.View
+                  style={[
+                    styles.pulseRing,
+                    { backgroundColor: iconColor },
+                    pulseRingStyle,
+                  ]}
+                />
+              )}
+              <Animated.View style={[styles.iconContainer, { backgroundColor: iconColor + '20' }, iconPulseStyle]}>
+                <Icon name={config.icon} size={22} color={iconColor} />
+              </Animated.View>
             </View>
 
             {/* Text content */}
@@ -245,6 +307,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+  },
+  iconWrapper: {
+    width: 40,
+    height: 40,
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pulseRing: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   iconContainer: {
     width: 40,
