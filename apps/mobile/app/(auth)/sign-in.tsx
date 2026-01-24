@@ -4,53 +4,23 @@ import { useRouter } from 'expo-router';
 import { Button } from 'heroui-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '@/hooks/use-theme-colors';
-import { authClient } from '@/lib/auth-client';
+import { useOAuthAuth } from '@/hooks/use-oauth-auth';
 import { useTranslation } from '@/lib/i18n';
-import { useTrialStore } from '@/stores/trial-store';
-import { Analytics, identifyUser } from '@/lib/analytics';
-import { queryClient } from '@/lib/query-client';
 import { useState } from 'react';
 
 export default function SignInScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const { t } = useTranslation();
-  const { startTrial, trialStartDate } = useTrialStore();
   const [isLoading, setIsLoading] = useState<'google' | 'apple' | null>(null);
-
-  // Start trial for new users after successful auth
-  const onAuthSuccess = async (method: 'google' | 'apple' | 'email') => {
-    const isNewUser = !trialStartDate;
-    if (isNewUser) {
-      startTrial();
-      Analytics.signUp(method);
-    } else {
-      Analytics.signIn(method);
-    }
-
-    // Get session and identify user for analytics
-    const session = await authClient.getSession();
-    if (session.data?.user) {
-      identifyUser(session.data.user.id, {
-        email: session.data.user.email ?? null,
-        name: session.data.user.name ?? null,
-      });
-    }
-
-    // Invalidate all queries so they refetch with the new auth token
-    await queryClient.invalidateQueries();
-
-    router.replace('/(app)/(tabs)');
-  };
+  const { signInWithGoogle, signInWithApple } = useOAuthAuth();
 
   const handleGoogleSignIn = async () => {
     setIsLoading('google');
     try {
-      await authClient.signIn.social({ provider: 'google' });
-      await onAuthSuccess('google');
-    } catch (error) {
-      console.error('Google sign-in error:', error);
-      Analytics.errorOccurred('google_sign_in_failed', String(error));
+      await signInWithGoogle();
+    } catch {
+      // Error already logged in hook
     } finally {
       setIsLoading(null);
     }
@@ -59,11 +29,9 @@ export default function SignInScreen() {
   const handleAppleSignIn = async () => {
     setIsLoading('apple');
     try {
-      await authClient.signIn.social({ provider: 'apple' });
-      await onAuthSuccess('apple');
-    } catch (error) {
-      console.error('Apple sign-in error:', error);
-      Analytics.errorOccurred('apple_sign_in_failed', String(error));
+      await signInWithApple();
+    } catch {
+      // Error already logged in hook
     } finally {
       setIsLoading(null);
     }

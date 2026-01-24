@@ -1,18 +1,24 @@
 // apps/platform/src/app/api/subscription/portal/route.ts
-import { auth } from "@driwet/auth";
 import { polarClient } from "@driwet/auth/lib/payments";
 import { NextResponse, type NextRequest } from "next/server";
-import { headers } from "next/headers";
+import { getSessionFromRequest } from "@/lib/session-helper";
 
 export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const mobileToken = searchParams.get("token");
+
   try {
-    // Get current session
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const { session, isMobile } = await getSessionFromRequest(mobileToken);
 
     if (!session?.user?.email) {
-      // Redirect to login if not authenticated
+      // If from mobile, return error instead of redirect
+      if (isMobile) {
+        return NextResponse.json(
+          { error: "Session expired. Please sign in again." },
+          { status: 401 }
+        );
+      }
+      // Redirect to login for web users
       return NextResponse.redirect(new URL("/login?redirect=/api/subscription/portal", request.url));
     }
 
@@ -26,7 +32,11 @@ export async function GET(request: NextRequest) {
 
     if (!customer) {
       // No subscription history - redirect to checkout
-      return NextResponse.redirect(new URL("/api/subscription/checkout?plan=monthly", request.url));
+      // Preserve token for mobile users
+      const checkoutUrl = mobileToken
+        ? `/api/subscription/checkout?plan=monthly&token=${encodeURIComponent(mobileToken)}`
+        : "/api/subscription/checkout?plan=monthly";
+      return NextResponse.redirect(new URL(checkoutUrl, request.url));
     }
 
     // Create customer session for portal access

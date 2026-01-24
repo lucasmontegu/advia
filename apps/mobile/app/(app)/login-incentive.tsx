@@ -4,10 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Button } from 'heroui-native';
 import { useThemeColors } from '@/hooks/use-theme-colors';
-import { authClient } from '@/lib/auth-client';
+import { useOAuthAuth } from '@/hooks/use-oauth-auth';
 import { Icon } from '@/components/icons';
 import { useTranslation } from '@/lib/i18n';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export default function LoginIncentiveModal() {
   const colors = useThemeColors();
@@ -15,13 +15,22 @@ export default function LoginIncentiveModal() {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<'google' | 'apple' | null>(null);
 
+  // Close modal after successful auth instead of navigating to home
+  const handleAuthSuccess = useCallback(() => {
+    router.back();
+  }, [router]);
+
+  const { signInWithGoogle, signInWithApple } = useOAuthAuth({
+    onSuccess: handleAuthSuccess,
+    navigateToHome: false,
+  });
+
   const handleGoogleSignIn = async () => {
     setIsLoading('google');
     try {
-      await authClient.signIn.social({ provider: 'google' });
-      router.back();
-    } catch (error) {
-      console.error('Google sign-in error:', error);
+      await signInWithGoogle();
+    } catch {
+      // Error already logged in hook
     } finally {
       setIsLoading(null);
     }
@@ -30,10 +39,9 @@ export default function LoginIncentiveModal() {
   const handleAppleSignIn = async () => {
     setIsLoading('apple');
     try {
-      await authClient.signIn.social({ provider: 'apple' });
-      router.back();
-    } catch (error) {
-      console.error('Apple sign-in error:', error);
+      await signInWithApple();
+    } catch {
+      // Error already logged in hook
     } finally {
       setIsLoading(null);
     }

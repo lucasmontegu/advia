@@ -1,9 +1,20 @@
 import { useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Linking } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
 import { api } from '@/lib/query-client';
 import { useTrialStore } from '@/stores/trial-store';
 import { env } from '@driwet/env/mobile';
+
+// Helper to get app scheme with proper null handling
+function getAppScheme(): string {
+  const scheme = Constants.expoConfig?.scheme;
+  if (!scheme) {
+    throw new Error('App scheme not configured in app.json');
+  }
+  return typeof scheme === 'string' ? scheme : scheme[0];
+}
 
 export function useSubscriptionStatus() {
   const { setPremium } = useTrialStore();
@@ -24,17 +35,39 @@ export function useSubscriptionStatus() {
   return query;
 }
 
+// Helper to get session token from SecureStore
+async function getSessionToken(): Promise<string | null> {
+  try {
+    const scheme = getAppScheme();
+    const tokenKey = `${scheme}_better-auth.session_token`;
+    const token = await SecureStore.getItemAsync(tokenKey);
+    return token;
+  } catch (error) {
+    console.error('Failed to get session token:', error);
+    return null;
+  }
+}
+
 export function useSubscriptionCheckout() {
   const handleCheckout = useCallback(async (plan: 'monthly' | 'yearly') => {
     try {
-      // Open web-based Polar checkout
-      // This will redirect to the Polar checkout page
-      const checkoutUrl = `${env.EXPO_PUBLIC_SERVER_URL}/api/subscription/checkout?plan=${plan}`;
-      const canOpen = await Linking.canOpenURL(checkoutUrl);
-      if (canOpen) {
-        await Linking.openURL(checkoutUrl);
-      } else {
-        throw new Error('Cannot open checkout URL');
+      // Get the session token to pass to the checkout endpoint
+      const sessionToken = await getSessionToken();
+      if (!sessionToken) {
+        throw new Error('Not authenticated. Please sign in first.');
+      }
+
+      // Build checkout URL with session token
+      const scheme = getAppScheme();
+      const checkoutUrl = `${env.EXPO_PUBLIC_SERVER_URL}/api/subscription/checkout?plan=${plan}&token=${encodeURIComponent(sessionToken)}`;
+      const returnUrl = `${scheme}://subscription/success`;
+
+      // Use WebBrowser.openAuthSessionAsync for better handling of auth flows
+      // This will open the checkout in an in-app browser and handle the deep link return
+      const result = await WebBrowser.openAuthSessionAsync(checkoutUrl, returnUrl);
+
+      if (result.type === 'cancel') {
+        console.log('Checkout cancelled by user');
       }
     } catch (error) {
       console.error('Checkout error:', error);
@@ -44,14 +77,19 @@ export function useSubscriptionCheckout() {
 
   const handlePortal = useCallback(async () => {
     try {
-      // Open the customer portal to manage subscription
-      const portalUrl = `${env.EXPO_PUBLIC_SERVER_URL}/api/subscription/portal`;
-      const canOpen = await Linking.canOpenURL(portalUrl);
-      if (canOpen) {
-        await Linking.openURL(portalUrl);
-      } else {
-        throw new Error('Cannot open portal URL');
+      // Get the session token to pass to the portal endpoint
+      const sessionToken = await getSessionToken();
+      if (!sessionToken) {
+        throw new Error('Not authenticated. Please sign in first.');
       }
+
+      // Build portal URL with session token
+      const scheme = getAppScheme();
+      const portalUrl = `${env.EXPO_PUBLIC_SERVER_URL}/api/subscription/portal?token=${encodeURIComponent(sessionToken)}`;
+      const returnUrl = `${scheme}://`;
+
+      // Use WebBrowser.openAuthSessionAsync for portal access
+      await WebBrowser.openAuthSessionAsync(portalUrl, returnUrl);
     } catch (error) {
       console.error('Portal error:', error);
       throw error;
