@@ -4,62 +4,33 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Button } from 'heroui-native';
 import { useThemeColors } from '@/hooks/use-theme-colors';
-import { authClient } from '@/lib/auth-client';
+import { useOAuthAuth } from '@/hooks/use-oauth-auth';
 import { Icon } from '@/components/icons';
 import { useTranslation } from '@/lib/i18n';
-import { useState, useEffect, useRef } from 'react';
-import { useTrialStore } from '@/stores/trial-store';
-import { Analytics, identifyUser } from '@/lib/analytics';
-import { queryClient } from '@/lib/query-client';
+import { useState, useCallback } from 'react';
 
 export default function LoginIncentiveModal() {
   const colors = useThemeColors();
   const router = useRouter();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState<'google' | 'apple' | null>(null);
-  const { startTrial, trialStartDate } = useTrialStore();
-  const { data: session } = authClient.useSession();
-  const pendingAuthMethod = useRef<'google' | 'apple' | null>(null);
-  const hasHandledAuth = useRef(false);
 
-  // Handle successful OAuth authentication
-  useEffect(() => {
-    if (session?.user && pendingAuthMethod.current && !hasHandledAuth.current) {
-      hasHandledAuth.current = true;
-      const method = pendingAuthMethod.current;
+  // Close modal after successful auth instead of navigating to home
+  const handleAuthSuccess = useCallback(() => {
+    router.back();
+  }, [router]);
 
-      // Start trial for new users
-      const isNewUser = !trialStartDate;
-      if (isNewUser) {
-        startTrial();
-        Analytics.signUp(method);
-      } else {
-        Analytics.signIn(method);
-      }
-
-      // Identify user for analytics
-      identifyUser(session.user.id, {
-        email: session.user.email ?? null,
-        name: session.user.name ?? null,
-      });
-
-      // Invalidate queries and close modal
-      queryClient.invalidateQueries().then(() => {
-        router.back();
-      });
-    }
-  }, [session, trialStartDate, startTrial, router]);
+  const { signInWithGoogle, signInWithApple } = useOAuthAuth({
+    onSuccess: handleAuthSuccess,
+    navigateToHome: false,
+  });
 
   const handleGoogleSignIn = async () => {
     setIsLoading('google');
-    pendingAuthMethod.current = 'google';
-    hasHandledAuth.current = false;
     try {
-      await authClient.signIn.social({ provider: 'google' });
-      // The useEffect above will handle the rest when session updates
-    } catch (error) {
-      console.error('Google sign-in error:', error);
-      pendingAuthMethod.current = null;
+      await signInWithGoogle();
+    } catch {
+      // Error already logged in hook
     } finally {
       setIsLoading(null);
     }
@@ -67,14 +38,10 @@ export default function LoginIncentiveModal() {
 
   const handleAppleSignIn = async () => {
     setIsLoading('apple');
-    pendingAuthMethod.current = 'apple';
-    hasHandledAuth.current = false;
     try {
-      await authClient.signIn.social({ provider: 'apple' });
-      // The useEffect above will handle the rest when session updates
-    } catch (error) {
-      console.error('Apple sign-in error:', error);
-      pendingAuthMethod.current = null;
+      await signInWithApple();
+    } catch {
+      // Error already logged in hook
     } finally {
       setIsLoading(null);
     }

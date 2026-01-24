@@ -1,40 +1,27 @@
 // apps/platform/src/app/api/subscription/checkout/route.ts
-import { auth } from "@driwet/auth";
 import { polarClient } from "@driwet/auth/lib/payments";
 import { env } from "@driwet/env/server";
 import { NextResponse, type NextRequest } from "next/server";
-import { headers } from "next/headers";
+import { getSessionFromRequest } from "@/lib/session-helper";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
-  const plan = searchParams.get("plan") as "monthly" | "yearly";
+  const planParam = searchParams.get("plan");
   const mobileToken = searchParams.get("token");
 
-  if (!plan || !["monthly", "yearly"].includes(plan)) {
+  // Validate plan before type narrowing
+  if (!planParam || !["monthly", "yearly"].includes(planParam)) {
     return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }
 
-  try {
-    let session;
+  const plan = planParam as "monthly" | "yearly";
 
-    // If a mobile session token is provided, validate it
-    if (mobileToken) {
-      // Validate the session token from mobile app
-      session = await auth.api.getSession({
-        headers: new Headers({
-          Authorization: `Bearer ${mobileToken}`,
-        }),
-      });
-    } else {
-      // Fall back to cookie-based session for web
-      session = await auth.api.getSession({
-        headers: await headers(),
-      });
-    }
+  try {
+    const { session, isMobile } = await getSessionFromRequest(mobileToken);
 
     if (!session?.user?.email) {
-      // If from mobile (has token param), return error instead of redirect
-      if (mobileToken) {
+      // If from mobile, return error instead of redirect
+      if (isMobile) {
         return NextResponse.json(
           { error: "Session expired. Please sign in again." },
           { status: 401 }

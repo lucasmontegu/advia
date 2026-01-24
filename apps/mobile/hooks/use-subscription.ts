@@ -7,6 +7,15 @@ import { api } from '@/lib/query-client';
 import { useTrialStore } from '@/stores/trial-store';
 import { env } from '@driwet/env/mobile';
 
+// Helper to get app scheme with proper null handling
+function getAppScheme(): string {
+  const scheme = Constants.expoConfig?.scheme;
+  if (!scheme) {
+    throw new Error('App scheme not configured in app.json');
+  }
+  return typeof scheme === 'string' ? scheme : scheme[0];
+}
+
 export function useSubscriptionStatus() {
   const { setPremium } = useTrialStore();
 
@@ -29,7 +38,7 @@ export function useSubscriptionStatus() {
 // Helper to get session token from SecureStore
 async function getSessionToken(): Promise<string | null> {
   try {
-    const scheme = Constants.expoConfig?.scheme as string;
+    const scheme = getAppScheme();
     const tokenKey = `${scheme}_better-auth.session_token`;
     const token = await SecureStore.getItemAsync(tokenKey);
     return token;
@@ -49,7 +58,7 @@ export function useSubscriptionCheckout() {
       }
 
       // Build checkout URL with session token
-      const scheme = Constants.expoConfig?.scheme as string;
+      const scheme = getAppScheme();
       const checkoutUrl = `${env.EXPO_PUBLIC_SERVER_URL}/api/subscription/checkout?plan=${plan}&token=${encodeURIComponent(sessionToken)}`;
       const returnUrl = `${scheme}://subscription/success`;
 
@@ -75,7 +84,7 @@ export function useSubscriptionCheckout() {
       }
 
       // Build portal URL with session token
-      const scheme = Constants.expoConfig?.scheme as string;
+      const scheme = getAppScheme();
       const portalUrl = `${env.EXPO_PUBLIC_SERVER_URL}/api/subscription/portal?token=${encodeURIComponent(sessionToken)}`;
       const returnUrl = `${scheme}://`;
 
