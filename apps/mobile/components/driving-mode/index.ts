@@ -1,6 +1,6 @@
 // apps/mobile/components/driving-mode/index.ts
 export {
+	type DrivingAlert,
 	DrivingModeOverlay,
 	DrivingModeStatusBar,
-	type DrivingAlert,
 } from "./driving-mode-overlay";

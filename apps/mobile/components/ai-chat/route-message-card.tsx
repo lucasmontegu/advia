@@ -28,9 +28,16 @@ type RouteMessageCardProps = {
 	onSaveRoute?: () => void;
 };
 
-const RISK_STYLES: Record<RoadRisk, { bg: string; text: string; label: string }> = {
+const RISK_STYLES: Record<
+	RoadRisk,
+	{ bg: string; text: string; label: string }
+> = {
 	low: { bg: "rgba(34, 197, 94, 0.15)", text: "#16a34a", label: "Safe" },
-	moderate: { bg: "rgba(234, 179, 8, 0.15)", text: "#ca8a04", label: "Caution" },
+	moderate: {
+		bg: "rgba(234, 179, 8, 0.15)",
+		text: "#ca8a04",
+		label: "Caution",
+	},
 	high: { bg: "rgba(249, 115, 22, 0.15)", text: "#ea580c", label: "Warning" },
 	extreme: { bg: "rgba(220, 38, 38, 0.15)", text: "#dc2626", label: "Danger" },
 };
@@ -60,7 +67,12 @@ export function RouteMessageCard({
 		>
 			{/* Route Header */}
 			<View style={styles.header}>
-				<View style={[styles.iconContainer, { backgroundColor: colors.primary + "15" }]}>
+				<View
+					style={[
+						styles.iconContainer,
+						{ backgroundColor: colors.primary + "15" },
+					]}
+				>
 					<Icon name="route" size={18} color={colors.primary} />
 				</View>
 				<Text style={[styles.title, { color: colors.foreground }]}>
@@ -76,7 +88,9 @@ export function RouteMessageCard({
 			{/* Route Points */}
 			<View style={styles.routePoints}>
 				<View style={styles.routePoint}>
-					<View style={[styles.routeDot, { backgroundColor: colors.primary }]} />
+					<View
+						style={[styles.routeDot, { backgroundColor: colors.primary }]}
+					/>
 					<Text
 						style={[styles.routePointText, { color: colors.foreground }]}
 						numberOfLines={1}
@@ -86,7 +100,9 @@ export function RouteMessageCard({
 				</View>
 				<View style={[styles.routeLine, { backgroundColor: colors.border }]} />
 				<View style={styles.routePoint}>
-					<View style={[styles.routeDot, { backgroundColor: colors.destructive }]} />
+					<View
+						style={[styles.routeDot, { backgroundColor: colors.destructive }]}
+					/>
 					<Text
 						style={[styles.routePointText, { color: colors.foreground }]}
 						numberOfLines={1}
@@ -125,7 +141,9 @@ export function RouteMessageCard({
 
 			{/* Weather Summary */}
 			{route.weatherSummary && (
-				<View style={[styles.weatherSummary, { backgroundColor: riskStyle.bg }]}>
+				<View
+					style={[styles.weatherSummary, { backgroundColor: riskStyle.bg }]}
+				>
 					<Icon name="weather" size={14} color={riskStyle.text} />
 					<Text style={[styles.weatherText, { color: riskStyle.text }]}>
 						{route.weatherSummary}

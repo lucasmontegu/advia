@@ -95,7 +95,16 @@ export function TypingIndicator({
 		animateDot(dot1Y, dot1Opacity, 0);
 		animateDot(dot2Y, dot2Opacity, 120);
 		animateDot(dot3Y, dot3Opacity, 240);
-	}, [dot1Y, dot1Opacity, dot2Y, dot2Opacity, dot3Y, dot3Opacity, dotSize, variant]);
+	}, [
+		dot1Y,
+		dot1Opacity,
+		dot2Y,
+		dot2Opacity,
+		dot3Y,
+		dot3Opacity,
+		dotSize,
+		variant,
+	]);
 
 	const dot1Style = useAnimatedStyle(() => ({
 		transform: [{ translateY: dot1Y.value }],

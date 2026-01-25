@@ -1,35 +1,35 @@
 {
-  "name": "@driwet/api",
-  "type": "module",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
-  "scripts": {},
-  "dependencies": {
-    "@driwet/auth": "workspace:*",
-    "@driwet/db": "workspace:*",
-    "@driwet/env": "workspace:*",
-    "@ai-sdk/google": "^3.0.10",
-    "@orpc/client": "catalog:",
-    "@orpc/openapi": "catalog:",
-    "@orpc/server": "catalog:",
-    "@orpc/tanstack-query": "^1.13.4",
-    "@orpc/zod": "catalog:",
-    "ai": "^6.0.39",
-    "ai-sdk-tools": "^1.2.0",
-    "dotenv": "catalog:",
-    "drizzle-orm": "^0.45.1",
-    "nanoid": "^5.0.9",
-    "next": "catalog:",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@driwet/config": "workspace:*",
-    "typescript": "catalog:"
-  }
+	"name": "@driwet/api",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {},
+	"dependencies": {
+		"@driwet/auth": "workspace:*",
+		"@driwet/db": "workspace:*",
+		"@driwet/env": "workspace:*",
+		"@ai-sdk/google": "^3.0.10",
+		"@orpc/client": "catalog:",
+		"@orpc/openapi": "catalog:",
+		"@orpc/server": "catalog:",
+		"@orpc/tanstack-query": "^1.13.4",
+		"@orpc/zod": "catalog:",
+		"ai": "^6.0.39",
+		"ai-sdk-tools": "^1.2.0",
+		"dotenv": "catalog:",
+		"drizzle-orm": "^0.45.1",
+		"nanoid": "^5.0.9",
+		"next": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@driwet/config": "workspace:*",
+		"typescript": "catalog:"
+	}
 }

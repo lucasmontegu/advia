@@ -170,7 +170,9 @@ export function SafeStopCard({
 					style={styles.waitTimeRow}
 				>
 					<Icon name="clock" size={14} color={colors.mutedForeground} />
-					<Text style={[styles.waitTimeText, { color: colors.mutedForeground }]}>
+					<Text
+						style={[styles.waitTimeText, { color: colors.mutedForeground }]}
+					>
 						Estimated wait: ~{stop.waitTime} min for conditions to clear
 					</Text>
 				</Animated.View>
@@ -299,16 +301,15 @@ export function SafeStopListItem({
 			onPress={onPress}
 			onPressIn={handlePressIn}
 			onPressOut={handlePressOut}
-			style={[
-				styles.listItem,
-				{ backgroundColor: colors.card },
-				animatedStyle,
-			]}
+			style={[styles.listItem, { backgroundColor: colors.card }, animatedStyle]}
 			accessibilityRole="button"
 			accessibilityLabel={`${stop.name} at km ${stop.km}`}
 		>
 			<View
-				style={[styles.listItemIcon, { backgroundColor: colors.primary + "15" }]}
+				style={[
+					styles.listItemIcon,
+					{ backgroundColor: colors.primary + "15" },
+				]}
 			>
 				<Icon
 					name={STOP_TYPE_ICONS[stop.type]}

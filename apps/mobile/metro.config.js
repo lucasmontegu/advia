@@ -14,22 +14,22 @@ config.watchFolders = [monorepoRoot];
 
 // 2. Let Metro know where to resolve packages from
 config.resolver.nodeModulesPaths = [
-  path.resolve(projectRoot, "node_modules"),
-  path.resolve(monorepoRoot, "node_modules"),
+	path.resolve(projectRoot, "node_modules"),
+	path.resolve(monorepoRoot, "node_modules"),
 ];
 
 // 3. Force specific packages to resolve from the app's node_modules
 // This prevents duplicate React instances
 config.resolver.extraNodeModules = {
-  react: path.resolve(projectRoot, "node_modules/react"),
-  "react-native": path.resolve(projectRoot, "node_modules/react-native"),
-  "react-i18next": path.resolve(projectRoot, "node_modules/react-i18next"),
-  i18next: path.resolve(projectRoot, "node_modules/i18next"),
+	react: path.resolve(projectRoot, "node_modules/react"),
+	"react-native": path.resolve(projectRoot, "node_modules/react-native"),
+	"react-i18next": path.resolve(projectRoot, "node_modules/react-i18next"),
+	i18next: path.resolve(projectRoot, "node_modules/i18next"),
 };
 
 const uniwindConfig = withUniwindConfig(config, {
-  cssEntryFile: "./global.css",
-  dtsFile: "./uniwind-types.d.ts",
+	cssEntryFile: "./global.css",
+	dtsFile: "./uniwind-types.d.ts",
 });
 
 module.exports = uniwindConfig;

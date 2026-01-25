@@ -2,17 +2,17 @@
 
 import { useEffect, useRef } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
 	FadeIn,
 	FadeOut,
+	runOnJS,
 	SlideInDown,
 	SlideOutDown,
-	runOnJS,
 	useAnimatedStyle,
 	useSharedValue,
 	withTiming,
 } from "react-native-reanimated";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Icon, type IconName } from "@/components/icons";
 
 // ============ Types ============
@@ -140,7 +140,9 @@ export function Toast({
 	return (
 		<GestureDetector gesture={panGesture}>
 			<Animated.View
-				entering={SlideInDown.springify().damping(15).delay(index * 50)}
+				entering={SlideInDown.springify()
+					.damping(15)
+					.delay(index * 50)}
 				exiting={SlideOutDown.duration(200)}
 				style={[
 					styles.container,

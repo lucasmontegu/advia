@@ -1,0 +1,137 @@
+import type { ConfigContext, ExpoConfig } from "expo/config";
+
+// Load environment variables
+const MAPBOX_ACCESS_TOKEN =
+	process.env.EXPO_PUBLIC_MAPBOX_ACCESS_TOKEN ||
+	process.env.MAPBOX_ACCESS_TOKEN;
+
+// Note: @rnmapbox/maps reads RNMAPBOX_MAPS_DOWNLOAD_TOKEN directly from environment
+
+export default ({ config }: ConfigContext): ExpoConfig => ({
+	...config,
+	name: "Driwet",
+	slug: "driwet",
+	version: "1.0.0",
+	scheme: "driwet",
+	userInterfaceStyle: "automatic",
+	orientation: "default",
+	icon: "./assets/images/icon.png",
+	splash: {
+		image: "./assets/images/splash-icon.png",
+		resizeMode: "contain",
+		backgroundColor: "#ffffff",
+	},
+	web: {
+		bundler: "metro",
+	},
+	plugins: [
+		[
+			"expo-build-properties",
+			{
+				ios: {
+					useFrameworks: "static",
+				},
+			},
+		],
+		"./plugins/withDisableSandboxing.js",
+		[
+			"expo-font",
+			{
+				fonts: [
+					"./node_modules/@expo-google-fonts/inter/100Thin/Inter_100Thin.ttf",
+					"./node_modules/@expo-google-fonts/inter/300Light/Inter_300Light.ttf",
+					"./node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf",
+					"./node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf",
+				],
+			},
+		],
+		[
+			"expo-dev-client",
+			{
+				launchMode: "most-recent",
+			},
+		],
+		[
+			"expo-splash-screen",
+			{
+				image: "./assets/images/splash-icon.png",
+				backgroundColor: "#ffffff",
+			},
+		],
+		// @rnmapbox/maps reads RNMAPBOX_MAPS_DOWNLOAD_TOKEN from env automatically
+		"@rnmapbox/maps",
+		"./plugins/withCarPlay.js",
+		[
+			"expo-location",
+			{
+				locationAlwaysAndWhenInUsePermission:
+					"Driwet necesita tu ubicación para mostrarte alertas de clima cercanas y guiarte a refugios seguros.",
+				locationWhenInUsePermission:
+					"Driwet necesita tu ubicación para mostrarte alertas de clima cercanas.",
+				isAndroidBackgroundLocationEnabled: true,
+				isAndroidForegroundServiceEnabled: true,
+			},
+		],
+		"expo-localization",
+		[
+			"expo-notifications",
+			{
+				icon: "./assets/images/android-icon-monochrome.png",
+				color: "#4338CA",
+				sounds: [],
+				mode: "production",
+			},
+		],
+		[
+			"expo-web-browser",
+			{
+				experimentalLauncherActivity: true,
+			},
+		],
+		"expo-router",
+	],
+	ios: {
+		bundleIdentifier: "com.driwet.app",
+		buildNumber: "1",
+		supportsTablet: true,
+		infoPlist: {
+			NSLocationWhenInUseUsageDescription:
+				"Driwet necesita tu ubicación para mostrarte alertas de clima cercanas.",
+			NSLocationAlwaysAndWhenInUseUsageDescription:
+				"Driwet necesita tu ubicación para mostrarte alertas de clima cercanas y guiarte a refugios seguros.",
+			NSLocationAlwaysUsageDescription:
+				"Driwet necesita tu ubicación en segundo plano para alertarte sobre clima peligroso mientras conduces.",
+			UIBackgroundModes: ["location", "fetch", "remote-notification", "audio"],
+		},
+	},
+	android: {
+		package: "com.driwet.app",
+		versionCode: 1,
+		adaptiveIcon: {
+			foregroundImage: "./assets/images/android-icon-foreground.png",
+			backgroundImage: "./assets/images/android-icon-background.png",
+			monochromeImage: "./assets/images/android-icon-monochrome.png",
+		},
+		permissions: [
+			"ACCESS_FINE_LOCATION",
+			"ACCESS_COARSE_LOCATION",
+			"ACCESS_BACKGROUND_LOCATION",
+			"FOREGROUND_SERVICE",
+			"FOREGROUND_SERVICE_LOCATION",
+			"RECEIVE_BOOT_COMPLETED",
+			"VIBRATE",
+			"WAKE_LOCK",
+		],
+	},
+	experiments: {
+		typedRoutes: true,
+		reactCompiler: true,
+	},
+	extra: {
+		router: {},
+		eas: {
+			projectId: "c2d09d38-8c04-4bda-a315-c6f70199e64d",
+		},
+	},
+	owner: "lmontegu",
+});

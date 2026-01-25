@@ -7,30 +7,30 @@ import Header from "@/components/header";
 import Providers from "@/components/providers";
 
 const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-})
+	variable: "--font-inter",
+	subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "driwet",
-  description: "driwet",
+	title: "driwet",
+	description: "driwet",
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode;
+	children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
-      <body className={`${inter.variable} antialiased`}>
-        <Providers>
-          <div className="grid grid-rows-[auto_1fr] h-svh">
-            <Header />
-            {children}
-          </div>
-        </Providers>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en" suppressHydrationWarning className={inter.variable}>
+			<body className={`${inter.variable} antialiased`}>
+				<Providers>
+					<div className="grid h-svh grid-rows-[auto_1fr]">
+						<Header />
+						{children}
+					</div>
+				</Providers>
+			</body>
+		</html>
+	);
 }

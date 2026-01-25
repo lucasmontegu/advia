@@ -1,9 +1,9 @@
 {
-  "extends": "@driwet/config/tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "resolveJsonModule": true
-  },
-  "include": ["src/**/*"]
+	"extends": "@driwet/config/tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"resolveJsonModule": true
+	},
+	"include": ["src/**/*"]
 }

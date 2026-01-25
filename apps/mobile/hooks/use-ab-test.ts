@@ -2,7 +2,11 @@
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
-import { getFeatureFlag, reloadFeatureFlags, trackEvent } from "@/lib/analytics";
+import {
+	getFeatureFlag,
+	reloadFeatureFlags,
+	trackEvent,
+} from "@/lib/analytics";
 
 // ============ A/B Test Configuration ============
 
@@ -50,7 +54,8 @@ export const AB_TESTS = {
 } as const;
 
 export type ABTestKey = keyof typeof AB_TESTS;
-export type ABTestVariant<K extends ABTestKey> = (typeof AB_TESTS)[K]["variants"][number];
+export type ABTestVariant<K extends ABTestKey> =
+	(typeof AB_TESTS)[K]["variants"][number];
 
 // Storage key for local variant overrides (for testing)
 const AB_TEST_OVERRIDE_KEY = "@driwet/ab-test-overrides";

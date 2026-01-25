@@ -1,298 +1,303 @@
 {
-  "common": {
-    "continue": "Continue",
-    "cancel": "Cancel",
-    "save": "Save",
-    "delete": "Delete",
-    "loading": "Loading...",
-    "error": "Error",
-    "retry": "Retry",
-    "or": "or",
-    "back": "Back",
-    "to": "to"
-  },
-  "welcome": {
-    "tagline": "Your climate co-pilot",
-    "subtitle": "Avoid storms. Arrive safely.",
-    "getStarted": "Get started",
-    "freeTrialNote": "Create your account in seconds. 3 days free with all features included.",
-    "feature1": "Real-time weather alerts on your route",
-    "feature2": "Plan trips with confidence using AI weather analysis",
-    "feature3": "Get notified before dangerous weather hits"
-  },
-  "auth": {
-    "signInTitle": "Sign in",
-    "signUpTitle": "Create your account",
-    "signInSubtitle": "Sync your routes and alerts across all your devices",
-    "signUpSubtitle": "Start receiving real-time weather alerts",
-    "continueWithGoogle": "Continue with Google",
-    "continueWithApple": "Continue with Apple",
-    "continueWithEmail": "Continue with email",
-    "email": "Email",
-    "emailPlaceholder": "you@email.com",
-    "password": "Password",
-    "passwordPlaceholder": "Your password",
-    "name": "Name",
-    "namePlaceholder": "Your name",
-    "signIn": "Sign in",
-    "signUp": "Create account",
-    "loading": "Loading...",
-    "connecting": "Connecting...",
-    "fillAllFields": "Please fill in all fields",
-    "passwordTooShort": "Password must be at least 8 characters",
-    "passwordRequirements": "Password must be at least 8 characters",
-    "signInError": "Error signing in. Please check your credentials.",
-    "signUpError": "Error creating account. Email may already be registered.",
-    "noAccount": "Don't have an account?",
-    "haveAccount": "Already have an account?",
-    "loginSuccess": "Welcome!",
-    "redirecting": "Redirecting to the app..."
-  },
-  "location": {
-      "permissionDenied": "Location permission is needed to use the app",
-      "error": "Error getting location"
-  },
-  "tabs": {
-    "map": "Map",
-    "routes": "Routes",
-    "profile": "Profile"
-  },
-  "map": {
-    "myZone": "My zone",
-    "screenLabel": "Weather map screen",
-    "mapArea": "Interactive weather map",
-    "chatPlaceholder": "Type a message...",
-    "chatPrompt": "Where are you going today?",
-    "suggestions": {
-      "workRoute": "My route to work",
-      "nearbyAlerts": "Nearby alerts",
-      "willItRain": "Will it rain today?"
-    }
-  },
-  "alerts": {
-    "extreme": "Extreme alert",
-    "severe": "Severe alert",
-    "moderate": "Moderate alert",
-    "minor": "Minor alert",
-    "distance": "{{distance}} away"
-  },
-  "routes": {
-    "title": "My Routes",
-    "addNew": "Add new route",
-    "createRoute": "Create route",
-    "routeDetail": "Route detail",
-    "history": "History",
-    "noAlerts": "No alerts",
-    "clear": "Clear",
-    "rain": "Rain at {{time}}",
-    "avoidedStorm": "Avoided storm",
-    "safeRoute": "Safe route",
-    "estimatedSavings": "Estimated savings: {{amount}}",
-    "routeName": "Route name",
-    "routeNamePlaceholder": "E.g: Home to work",
-    "origin": "Origin",
-    "originPlaceholder": "Search starting point...",
-    "destination": "Destination",
-    "destinationPlaceholder": "Search destination...",
-    "useCurrentLocation": "Use my current location",
-    "searchPlaces": "Search places",
-    "noResults": "No results",
-    "loading": "Loading...",
-    "analyzing": "Analyzing weather on route...",
-    "weatherConditions": "Weather conditions",
-    "startTrip": "Start trip",
-    "navigateWith": "Navigate with",
-    "riskLow": "Safe conditions",
-    "riskModerate": "Caution recommended",
-    "riskHigh": "Difficult conditions",
-    "riskExtreme": "Danger - avoid if possible",
-    "distance": "{{km}} km",
-    "duration": "{{min}} min",
-    "refreshWeather": "Refresh weather",
-    "tapToViewDetails": "Tap to view route details",
-    "addNewHint": "Create a new saved route",
-    "removeFavorite": "Remove from favorites",
-    "addFavorite": "Add to favorites"
-  },
-  "profile": {
-    "title": "Profile",
-    "stats": "Statistics",
-    "stormsAvoided": "{{count}} storms avoided",
-    "moneySaved": "~${{amount}} saved",
-    "kmTraveled": "{{km}} km traveled safely",
-    "settings": "Settings",
-    "notifications": "Notifications",
-    "savedLocations": "Saved locations",
-    "theme": "Theme",
-    "themeAuto": "Auto",
-    "language": "Language",
-    "languageSpanish": "Español",
-    "languageEnglish": "English",
-    "help": "Help & support",
-    "logout": "Sign out",
-    "trialRemaining": "Trial: {{days}} days remaining",
-    "planPremium": "Plan: Premium",
-    "upgrade": "Upgrade"
-  },
-  "premium": {
-    "title": "Driwet Premium",
-    "features": {
-      "unlimitedRoutes": "Unlimited routes",
-      "realTimeAlerts": "Real-time alerts",
-      "noAds": "No ads",
-      "refugeLocations": "Refuge locations",
-      "fullHistory": "Full history",
-      "multipleLocations": "Multiple locations"
-    },
-    "monthly": "$4.99/month",
-    "yearly": "$39.99/year (save 33%)",
-    "cancelAnytime": "Cancel anytime",
-    "processedBy": "Secure payment via App Store"
-  },
-  "loginIncentive": {
-    "title": "Save your data",
-    "subtitle": "Sign in to sync routes and locations across all your devices.",
-    "continueWithoutAccount": "Continue without account",
-    "localDataOnly": "(local data only)"
-  },
-  "chat": {
-    "placeholder": "Type a message...",
-    "comingSoon": "This feature will be available soon.",
-    "thinking": "Thinking...",
-    "welcome": "Hi, I'm your weather assistant. Ask me about alerts in your area or if it's safe to travel somewhere."
-  },
-  "web": {
-    "nav": {
-      "home": "Home",
-      "dashboard": "Dashboard"
-    },
-    "auth": {
-      "welcomeBack": "Welcome Back",
-      "email": "Email",
-      "password": "Password",
-      "signIn": "Sign In",
-      "signingIn": "Signing in...",
-      "needAccount": "Need an account? Sign Up",
-      "signInSuccess": "Sign in successful",
-      "createAccount": "Create your account",
-      "name": "Name",
-      "signUp": "Sign Up",
-      "signingUp": "Signing up...",
-      "haveAccount": "Already have an account? Sign In",
-      "signUpSuccess": "Account created successfully"
-    }
-  },
-  "locations": {
-    "title": "Saved locations",
-    "empty": "No saved locations",
-    "emptySubtitle": "Add locations to receive weather alerts for those areas",
-    "addNew": "Add location",
-    "primary": "Primary",
-    "setPrimary": "Set as primary",
-    "alerts": "Alerts enabled",
-    "noAlerts": "Alerts disabled",
-    "deleteConfirm": "Delete this location?",
-    "deleteDescription": "This action cannot be undone",
-    "namePlaceholder": "Location name",
-    "home": "Home",
-    "work": "Work",
-    "custom": "Custom"
-  },
-  "subscription": {
-    "verifying": "Verifying subscription",
-    "pleaseWait": "Please wait while we confirm your payment",
-    "welcomePremium": "Welcome to Premium!",
-    "enjoyFeatures": "Enjoy all premium features",
-    "verifyError": "Verification error",
-    "contactSupport": "If the problem persists, contact support",
-    "checkoutError": "Could not start checkout. Please try again.",
-    "manageSubscription": "Manage subscription",
-    "planMonthly": "Monthly plan",
-    "planYearly": "Yearly plan"
-  },
-  "notifications": {
-    "title": "Notifications",
-    "types": "Notification types",
-    "weatherAlerts": "Weather alerts",
-    "weatherAlertsDesc": "Receive alerts when dangerous weather is detected near you or on your route",
-    "routeUpdates": "Route updates",
-    "routeUpdatesDesc": "Get notified about weather changes affecting your saved routes",
-    "weeklySummary": "Weekly summary",
-    "weeklySummaryDesc": "Receive a weekly report of storms avoided and safety statistics",
-    "urgent": "Urgent",
-    "enableNotifications": "Enable notifications",
-    "enableDesc": "Get alerts before dangerous weather affects your route",
-    "notificationsDisabled": "Notifications are disabled",
-    "disabledDesc": "Enable notifications in your device settings to receive weather alerts",
-    "enable": "Enable",
-    "openSettings": "Settings",
-    "infoText": "Critical weather alerts may override Do Not Disturb to ensure your safety. You can customize this in your device settings."
-  },
-  "places": {
-    "loading": "Searching nearby places...",
-    "noPlacesFound": "No nearby places found",
-    "gasStation": "Gas station",
-    "restArea": "Rest area",
-    "town": "Town",
-    "nearbyGasStations": "Nearby gas stations",
-    "nearbyRestAreas": "Nearby rest areas",
-    "nearbyTowns": "Nearby towns"
-  },
-  "weather": {
-    "distanceAway": "{{distance}} km away",
-    "roadConditions": "Road conditions",
-    "viewShelters": "View shelters",
-    "alternateRoute": "Find alternate route",
-    "temperature": "Temperature",
-    "risk": "Risk level",
-    "loading": "Loading weather data"
-  },
-  "onboarding": {
-    "hook": {
-      "text": "Every year, 1.3 million people die in road accidents. Many could be prevented with better information."
-    },
-    "promise": {
-      "title": "Meet your AI co-pilot",
-      "subtitle": "I watch the weather, so you can focus on the road."
-    },
-    "personalization": {
-      "title": "What kind of trips do you usually take?",
-      "options": {
-        "commute": "Daily commute",
-        "roadTrips": "Road trips",
-        "business": "Business travel",
-        "longHaul": "Long-haul driving"
-      }
-    },
-    "demo": {
-      "title": "See how I protect you",
-      "aiMessage": "Storm detected at km 120. I found a safe stop 15 minutes before—a gas station with shelter.",
-      "routeLabel": "Your City → Beach Town"
-    },
-    "signup": {
-      "title": "Ready to drive safer?",
-      "cta": "Create Free Account",
-      "guest": "Continue as guest",
-      "socialProof": "Join {{count}}+ drivers staying safe"
-    },
-    "skip": "Skip",
-    "next": "Next"
-  },
-  "safetyStatus": {
-    "safe": "Clear conditions until {{time}}",
-    "caution": "Light rain expected",
-    "warning": "Storm approaching—tap for details",
-    "danger": "Severe weather alert active",
-    "tapToExpand": "Tap for details",
-    "alertDescription": "Weather alert in your area",
-    "allClear": "No weather alerts in your area. Safe conditions for driving.",
-    "viewOnMap": "View on map",
-    "setAlert": "Set alert"
-  },
-  "aiCopilot": {
-    "greeting": "Hi! I'm your co-pilot. Tell me where you're going and I'll find the safest route.",
-    "planFirstTrip": "Plan my first trip",
-    "listening": "Listening...",
-    "thinking": "Thinking..."
-  }
+	"common": {
+		"continue": "Continue",
+		"cancel": "Cancel",
+		"save": "Save",
+		"delete": "Delete",
+		"loading": "Loading...",
+		"error": "Error",
+		"retry": "Retry",
+		"or": "or",
+		"back": "Back",
+		"to": "to"
+	},
+	"welcome": {
+		"tagline": "Your climate co-pilot",
+		"subtitle": "Avoid storms. Arrive safely.",
+		"getStarted": "Get started",
+		"freeTrialNote": "Create your account in seconds. 3 days free with all features included.",
+		"feature1": "Real-time weather alerts on your route",
+		"feature2": "Plan trips with confidence using AI weather analysis",
+		"feature3": "Get notified before dangerous weather hits"
+	},
+	"auth": {
+		"signInTitle": "Sign in",
+		"signUpTitle": "Create your account",
+		"signInSubtitle": "Sync your routes and alerts across all your devices",
+		"signUpSubtitle": "Start receiving real-time weather alerts",
+		"continueWithGoogle": "Continue with Google",
+		"continueWithApple": "Continue with Apple",
+		"continueWithEmail": "Continue with email",
+		"email": "Email",
+		"emailPlaceholder": "you@email.com",
+		"password": "Password",
+		"passwordPlaceholder": "Your password",
+		"name": "Name",
+		"namePlaceholder": "Your name",
+		"signIn": "Sign in",
+		"signUp": "Create account",
+		"loading": "Loading...",
+		"connecting": "Connecting...",
+		"fillAllFields": "Please fill in all fields",
+		"passwordTooShort": "Password must be at least 8 characters",
+		"passwordRequirements": "Password must be at least 8 characters",
+		"signInError": "Error signing in. Please check your credentials.",
+		"signUpError": "Error creating account. Email may already be registered.",
+		"noAccount": "Don't have an account?",
+		"haveAccount": "Already have an account?",
+		"loginSuccess": "Welcome!",
+		"redirecting": "Redirecting to the app..."
+	},
+	"location": {
+		"permissionDenied": "Location permission is needed to use the app",
+		"error": "Error getting location"
+	},
+	"tabs": {
+		"map": "Map",
+		"routes": "Routes",
+		"profile": "Profile"
+	},
+	"map": {
+		"myZone": "My zone",
+		"screenLabel": "Weather map screen",
+		"mapArea": "Interactive weather map",
+		"chatPlaceholder": "Type a message...",
+		"chatPrompt": "Where are you going today?",
+		"suggestions": {
+			"workRoute": "My route to work",
+			"nearbyAlerts": "Nearby alerts",
+			"willItRain": "Will it rain today?"
+		}
+	},
+	"alerts": {
+		"extreme": "Extreme alert",
+		"severe": "Severe alert",
+		"moderate": "Moderate alert",
+		"minor": "Minor alert",
+		"distance": "{{distance}} away"
+	},
+	"routes": {
+		"title": "My Routes",
+		"addNew": "Add new route",
+		"createRoute": "Create route",
+		"routeDetail": "Route detail",
+		"history": "History",
+		"noAlerts": "No alerts",
+		"clear": "Clear",
+		"rain": "Rain at {{time}}",
+		"avoidedStorm": "Avoided storm",
+		"safeRoute": "Safe route",
+		"estimatedSavings": "Estimated savings: {{amount}}",
+		"routeName": "Route name",
+		"routeNamePlaceholder": "E.g: Home to work",
+		"origin": "Origin",
+		"originPlaceholder": "Search starting point...",
+		"destination": "Destination",
+		"destinationPlaceholder": "Search destination...",
+		"useCurrentLocation": "Use my current location",
+		"searchPlaces": "Search places",
+		"noResults": "No results",
+		"loading": "Loading...",
+		"analyzing": "Analyzing weather on route...",
+		"weatherConditions": "Weather conditions",
+		"startTrip": "Start trip",
+		"navigateWith": "Navigate with",
+		"riskLow": "Safe conditions",
+		"riskModerate": "Caution recommended",
+		"riskHigh": "Difficult conditions",
+		"riskExtreme": "Danger - avoid if possible",
+		"distance": "{{km}} km",
+		"duration": "{{min}} min",
+		"refreshWeather": "Refresh weather",
+		"tapToViewDetails": "Tap to view route details",
+		"addNewHint": "Create a new saved route",
+		"removeFavorite": "Remove from favorites",
+		"addFavorite": "Add to favorites"
+	},
+	"profile": {
+		"title": "Profile",
+		"stats": "Statistics",
+		"stormsAvoided": "{{count}} storms avoided",
+		"moneySaved": "~${{amount}} saved",
+		"kmTraveled": "{{km}} km traveled safely",
+		"settings": "Settings",
+		"notifications": "Notifications",
+		"savedLocations": "Saved locations",
+		"theme": "Theme",
+		"themeAuto": "Auto",
+		"themeLight": "Light",
+		"themeDark": "Dark",
+		"selectTheme": "Select theme",
+		"language": "Language",
+		"languageSpanish": "Español",
+		"languageEnglish": "English",
+		"selectLanguage": "Select language",
+		"help": "Help & support",
+		"logout": "Sign out",
+		"trialRemaining": "Trial: {{days}} days remaining",
+		"planPremium": "Plan: Premium",
+		"upgrade": "Upgrade"
+	},
+	"premium": {
+		"title": "Driwet Premium",
+		"features": {
+			"unlimitedRoutes": "Unlimited routes",
+			"realTimeAlerts": "Real-time alerts",
+			"noAds": "No ads",
+			"refugeLocations": "Refuge locations",
+			"fullHistory": "Full history",
+			"multipleLocations": "Multiple locations"
+		},
+		"monthly": "$4.99/month",
+		"yearly": "$39.99/year (save 33%)",
+		"cancelAnytime": "Cancel anytime",
+		"processedBy": "Secure payment via App Store"
+	},
+	"loginIncentive": {
+		"title": "Save your data",
+		"subtitle": "Sign in to sync routes and locations across all your devices.",
+		"continueWithoutAccount": "Continue without account",
+		"localDataOnly": "(local data only)"
+	},
+	"chat": {
+		"placeholder": "Type a message...",
+		"comingSoon": "This feature will be available soon.",
+		"thinking": "Thinking...",
+		"welcome": "Hi, I'm your weather assistant. Ask me about alerts in your area or if it's safe to travel somewhere."
+	},
+	"web": {
+		"nav": {
+			"home": "Home",
+			"dashboard": "Dashboard"
+		},
+		"auth": {
+			"welcomeBack": "Welcome Back",
+			"email": "Email",
+			"password": "Password",
+			"signIn": "Sign In",
+			"signingIn": "Signing in...",
+			"needAccount": "Need an account? Sign Up",
+			"signInSuccess": "Sign in successful",
+			"createAccount": "Create your account",
+			"name": "Name",
+			"signUp": "Sign Up",
+			"signingUp": "Signing up...",
+			"haveAccount": "Already have an account? Sign In",
+			"signUpSuccess": "Account created successfully"
+		}
+	},
+	"locations": {
+		"title": "Saved locations",
+		"empty": "No saved locations",
+		"emptySubtitle": "Add locations to receive weather alerts for those areas",
+		"addNew": "Add location",
+		"primary": "Primary",
+		"setPrimary": "Set as primary",
+		"alerts": "Alerts enabled",
+		"noAlerts": "Alerts disabled",
+		"deleteConfirm": "Delete this location?",
+		"deleteDescription": "This action cannot be undone",
+		"namePlaceholder": "Location name",
+		"home": "Home",
+		"work": "Work",
+		"custom": "Custom"
+	},
+	"subscription": {
+		"verifying": "Verifying subscription",
+		"pleaseWait": "Please wait while we confirm your payment",
+		"welcomePremium": "Welcome to Premium!",
+		"enjoyFeatures": "Enjoy all premium features",
+		"verifyError": "Verification error",
+		"contactSupport": "If the problem persists, contact support",
+		"checkoutError": "Could not start checkout. Please try again.",
+		"manageSubscription": "Manage subscription",
+		"planMonthly": "Monthly plan",
+		"planYearly": "Yearly plan"
+	},
+	"notifications": {
+		"title": "Notifications",
+		"types": "Notification types",
+		"weatherAlerts": "Weather alerts",
+		"weatherAlertsDesc": "Receive alerts when dangerous weather is detected near you or on your route",
+		"routeUpdates": "Route updates",
+		"routeUpdatesDesc": "Get notified about weather changes affecting your saved routes",
+		"weeklySummary": "Weekly summary",
+		"weeklySummaryDesc": "Receive a weekly report of storms avoided and safety statistics",
+		"urgent": "Urgent",
+		"enableNotifications": "Enable notifications",
+		"enableDesc": "Get alerts before dangerous weather affects your route",
+		"notificationsDisabled": "Notifications are disabled",
+		"disabledDesc": "Enable notifications in your device settings to receive weather alerts",
+		"enable": "Enable",
+		"openSettings": "Settings",
+		"infoText": "Critical weather alerts may override Do Not Disturb to ensure your safety. You can customize this in your device settings."
+	},
+	"places": {
+		"loading": "Searching nearby places...",
+		"noPlacesFound": "No nearby places found",
+		"gasStation": "Gas station",
+		"restArea": "Rest area",
+		"town": "Town",
+		"nearbyGasStations": "Nearby gas stations",
+		"nearbyRestAreas": "Nearby rest areas",
+		"nearbyTowns": "Nearby towns"
+	},
+	"weather": {
+		"distanceAway": "{{distance}} km away",
+		"roadConditions": "Road conditions",
+		"viewShelters": "View shelters",
+		"alternateRoute": "Find alternate route",
+		"temperature": "Temperature",
+		"risk": "Risk level",
+		"loading": "Loading weather data"
+	},
+	"onboarding": {
+		"hook": {
+			"text": "Every year, 1.3 million people die in road accidents. Many could be prevented with better information."
+		},
+		"promise": {
+			"title": "Meet your AI co-pilot",
+			"subtitle": "I watch the weather, so you can focus on the road."
+		},
+		"personalization": {
+			"title": "What kind of trips do you usually take?",
+			"options": {
+				"commute": "Daily commute",
+				"roadTrips": "Road trips",
+				"business": "Business travel",
+				"longHaul": "Long-haul driving"
+			}
+		},
+		"demo": {
+			"title": "See how I protect you",
+			"aiMessage": "Storm detected at km 120. I found a safe stop 15 minutes before—a gas station with shelter.",
+			"routeLabel": "Your City → Beach Town"
+		},
+		"signup": {
+			"title": "Ready to drive safer?",
+			"cta": "Create Free Account",
+			"guest": "Continue as guest",
+			"socialProof": "Join {{count}}+ drivers staying safe"
+		},
+		"skip": "Skip",
+		"next": "Next",
+		"finish": "Finish"
+	},
+	"safetyStatus": {
+		"safe": "Clear conditions until {{time}}",
+		"caution": "Light rain expected",
+		"warning": "Storm approaching—tap for details",
+		"danger": "Severe weather alert active",
+		"tapToExpand": "Tap for details",
+		"alertDescription": "Weather alert in your area",
+		"allClear": "No weather alerts in your area. Safe conditions for driving.",
+		"viewOnMap": "View on map",
+		"setAlert": "Set alert"
+	},
+	"aiCopilot": {
+		"greeting": "Hi! I'm your co-pilot. Tell me where you're going and I'll find the safest route.",
+		"planFirstTrip": "Plan my first trip",
+		"listening": "Listening...",
+		"thinking": "Thinking..."
+	}
 }

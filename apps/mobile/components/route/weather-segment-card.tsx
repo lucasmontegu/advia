@@ -1,14 +1,14 @@
 // apps/mobile/components/route/weather-segment-card.tsx
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
 	FadeIn,
 	useAnimatedStyle,
 	useSharedValue,
 	withSpring,
 } from "react-native-reanimated";
-import { useThemeColors } from "@/hooks/use-theme-colors";
 import { Icon, type IconName } from "@/components/icons";
 import type { RoadRisk } from "@/hooks/use-route-weather";
+import { useThemeColors } from "@/hooks/use-theme-colors";
 
 export type WeatherCondition =
 	| "clear"
@@ -150,7 +150,12 @@ export function WeatherSegmentCard({
 			accessibilityLabel={`Segment ${segment.kmStart}km to ${segment.kmEnd ?? segment.kmStart + 50}km. ${segment.temperature} degrees. ${RISK_LABELS[segment.risk]} conditions.`}
 		>
 			{/* Weather Icon */}
-			<View style={[styles.iconContainer, { backgroundColor: riskStyle.border + "20" }]}>
+			<View
+				style={[
+					styles.iconContainer,
+					{ backgroundColor: riskStyle.border + "20" },
+				]}
+			>
 				<Icon name={icon} size={20} color={riskStyle.border} />
 			</View>
 
@@ -165,7 +170,9 @@ export function WeatherSegmentCard({
 			</View>
 
 			{/* Risk Badge */}
-			<View style={[styles.riskBadge, { backgroundColor: riskStyle.border + "20" }]}>
+			<View
+				style={[styles.riskBadge, { backgroundColor: riskStyle.border + "20" }]}
+			>
 				<Text style={[styles.riskText, { color: riskStyle.text }]}>
 					{RISK_LABELS[segment.risk]}
 				</Text>
@@ -207,7 +214,10 @@ export function WeatherSegmentDetail({
 				/>
 				<DetailRow
 					label="Condition"
-					value={segment.condition.charAt(0).toUpperCase() + segment.condition.slice(1)}
+					value={
+						segment.condition.charAt(0).toUpperCase() +
+						segment.condition.slice(1)
+					}
 					colors={colors}
 				/>
 				{segment.precipitationIntensity !== undefined && (
@@ -227,7 +237,11 @@ export function WeatherSegmentDetail({
 			</View>
 
 			<View style={[styles.riskIndicator, { backgroundColor: riskStyle.bg }]}>
-				<Icon name={segment.risk === "low" ? "check" : "alert"} size={16} color={riskStyle.border} />
+				<Icon
+					name={segment.risk === "low" ? "check" : "alert"}
+					size={16}
+					color={riskStyle.border}
+				/>
 				<Text style={[styles.riskIndicatorText, { color: riskStyle.text }]}>
 					{RISK_LABELS[segment.risk]} conditions
 				</Text>

@@ -18,6 +18,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 
 import { AppThemeProvider } from "@/contexts/app-theme-context";
+import { LanguageProvider } from "@/contexts/language-context";
 import { NotificationsProvider } from "@/contexts/notifications-context";
 import { initAnalytics } from "@/lib/analytics";
 import { getI18nInstance, I18nextProvider, setupI18n } from "@/lib/i18n";
@@ -75,17 +76,19 @@ export default function Layout() {
 					client={queryClient}
 					persistOptions={{ persister: asyncStoragePersister }}
 				>
-					<KeyboardProvider>
-						<AppThemeProvider>
-							<HeroUINativeProvider>
-								<RevenueCatProvider>
-									<NotificationsProvider>
-										<StackLayout />
-									</NotificationsProvider>
-								</RevenueCatProvider>
-							</HeroUINativeProvider>
-						</AppThemeProvider>
-					</KeyboardProvider>
+					<LanguageProvider>
+						<KeyboardProvider>
+							<AppThemeProvider>
+								<HeroUINativeProvider>
+									<RevenueCatProvider>
+										<NotificationsProvider>
+											<StackLayout />
+										</NotificationsProvider>
+									</RevenueCatProvider>
+								</HeroUINativeProvider>
+							</AppThemeProvider>
+						</KeyboardProvider>
+					</LanguageProvider>
 				</PersistQueryClientProvider>
 			</I18nextProvider>
 		</GestureHandlerRootView>

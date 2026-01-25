@@ -1,23 +1,23 @@
 {
-  "name": "@driwet/i18n",
-  "version": "1.0.0",
-  "type": "module",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./locales/*": {
-      "default": "./src/locales/*.json"
-    }
-  },
-  "peerDependencies": {
-    "i18next": "^24.0.0",
-    "react-i18next": "^15.0.0"
-  },
-  "devDependencies": {
-    "@driwet/config": "workspace:*",
-    "i18next": "^24.2.3",
-    "react-i18next": "^15.7.4",
-    "typescript": "catalog:"
-  }
+	"name": "@driwet/i18n",
+	"version": "1.0.0",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./locales/*": {
+			"default": "./src/locales/*.json"
+		}
+	},
+	"peerDependencies": {
+		"i18next": "^24.0.0",
+		"react-i18next": "^15.0.0"
+	},
+	"devDependencies": {
+		"@driwet/config": "workspace:*",
+		"i18next": "^24.2.3",
+		"react-i18next": "^15.7.4",
+		"typescript": "catalog:"
+	}
 }

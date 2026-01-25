@@ -284,13 +284,17 @@ export function usePremiumVoice() {
 
 				// Load saved voice preference
 				const savedVoice = await AsyncStorage.getItem(TTS_VOICE_KEY);
-				if (savedVoice && mappedVoices.some((v) => v.identifier === savedVoice)) {
+				if (
+					savedVoice &&
+					mappedVoices.some((v) => v.identifier === savedVoice)
+				) {
 					setSelectedVoiceState(savedVoice);
 				} else {
 					// Auto-select best English enhanced voice
-					const bestVoice = mappedVoices.find(
-						(v) => v.language.startsWith("en") && v.quality === "Enhanced",
-					) || mappedVoices.find((v) => v.language.startsWith("en"));
+					const bestVoice =
+						mappedVoices.find(
+							(v) => v.language.startsWith("en") && v.quality === "Enhanced",
+						) || mappedVoices.find((v) => v.language.startsWith("en"));
 
 					if (bestVoice) {
 						setSelectedVoiceState(bestVoice.identifier);
@@ -411,12 +415,17 @@ export function useAIVoice() {
 
 	// Speak weather warning
 	const speakWeatherWarning = useCallback(
-		async (condition: string, severity: "low" | "moderate" | "high" | "extreme") => {
+		async (
+			condition: string,
+			severity: "low" | "moderate" | "high" | "extreme",
+		) => {
 			if (!voice.isEnabled) return;
 			await Speech.stop();
 
-			const urgencyRate = severity === "extreme" ? 1.1 : severity === "high" ? 1.05 : 1.0;
-			const urgencyPitch = severity === "extreme" ? 1.1 : severity === "high" ? 1.05 : 1.0;
+			const urgencyRate =
+				severity === "extreme" ? 1.1 : severity === "high" ? 1.05 : 1.0;
+			const urgencyPitch =
+				severity === "extreme" ? 1.1 : severity === "high" ? 1.05 : 1.0;
 
 			Speech.speak(condition, {
 				language: "en-US",

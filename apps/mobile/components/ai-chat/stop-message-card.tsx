@@ -9,7 +9,13 @@ import Animated, {
 import { Icon, type IconName } from "@/components/icons";
 import { useThemeColors } from "@/hooks/use-theme-colors";
 
-export type StopAmenity = "fuel" | "restrooms" | "food" | "parking" | "coffee" | "atm";
+export type StopAmenity =
+	| "fuel"
+	| "restrooms"
+	| "food"
+	| "parking"
+	| "coffee"
+	| "atm";
 
 export type StopMessageData = {
 	id: string;
@@ -73,7 +79,10 @@ export function StopMessageCard({
 			{/* Header */}
 			<View style={styles.header}>
 				<View
-					style={[styles.iconContainer, { backgroundColor: colors.primary + "15" }]}
+					style={[
+						styles.iconContainer,
+						{ backgroundColor: colors.primary + "15" },
+					]}
 				>
 					<Icon name={typeIcon} size={18} color={colors.primary} />
 				</View>
@@ -88,13 +97,20 @@ export function StopMessageCard({
 						<Text style={[styles.type, { color: colors.mutedForeground }]}>
 							{typeLabel}
 						</Text>
-						<View style={[styles.dot, { backgroundColor: colors.mutedForeground }]} />
+						<View
+							style={[styles.dot, { backgroundColor: colors.mutedForeground }]}
+						/>
 						<Text style={[styles.km, { color: colors.mutedForeground }]}>
 							km {stop.km}
 						</Text>
 						{stop.isOpen !== undefined && (
 							<>
-								<View style={[styles.dot, { backgroundColor: colors.mutedForeground }]} />
+								<View
+									style={[
+										styles.dot,
+										{ backgroundColor: colors.mutedForeground },
+									]}
+								/>
 								<Text
 									style={[
 										styles.status,
@@ -136,7 +152,9 @@ export function StopMessageCard({
 								style={[styles.amenityBadge, { backgroundColor: colors.muted }]}
 							>
 								<Icon name="check" size={10} color="#22c55e" />
-								<Text style={[styles.amenityText, { color: colors.foreground }]}>
+								<Text
+									style={[styles.amenityText, { color: colors.foreground }]}
+								>
 									{config.label}
 								</Text>
 							</View>
@@ -149,7 +167,9 @@ export function StopMessageCard({
 			{stop.distanceFromCurrent !== undefined && (
 				<View style={styles.distanceRow}>
 					<Icon name="navigation" size={12} color={colors.mutedForeground} />
-					<Text style={[styles.distanceText, { color: colors.mutedForeground }]}>
+					<Text
+						style={[styles.distanceText, { color: colors.mutedForeground }]}
+					>
 						{stop.distanceFromCurrent < 1
 							? `${Math.round(stop.distanceFromCurrent * 1000)}m away`
 							: `${stop.distanceFromCurrent.toFixed(1)} km away`}
@@ -175,7 +195,9 @@ export function StopMessageCard({
 				)}
 				{onDismiss && (
 					<Pressable onPress={onDismiss} style={styles.dismissButton}>
-						<Text style={[styles.dismissText, { color: colors.mutedForeground }]}>
+						<Text
+							style={[styles.dismissText, { color: colors.mutedForeground }]}
+						>
 							Dismiss
 						</Text>
 					</Pressable>

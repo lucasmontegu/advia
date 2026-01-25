@@ -6,10 +6,10 @@ import { Icon } from "@/components/icons";
 import type { RoadRisk } from "@/hooks/use-route-weather";
 import { useThemeColors } from "@/hooks/use-theme-colors";
 import {
-	WeatherSegmentCard,
-	WeatherSegmentDetail,
 	type WeatherCondition,
+	WeatherSegmentCard,
 	type WeatherSegmentData,
+	WeatherSegmentDetail,
 } from "./weather-segment-card";
 
 type WeatherTimelineProps = {
@@ -94,7 +94,10 @@ export function WeatherTimeline({
 			style={[styles.container, { backgroundColor: colors.card }]}
 		>
 			{/* Header with overall risk */}
-			<Animated.View entering={FadeInUp.delay(100).duration(300)} style={styles.header}>
+			<Animated.View
+				entering={FadeInUp.delay(100).duration(300)}
+				style={styles.header}
+			>
 				<View style={styles.headerLeft}>
 					<Icon
 						name={OVERALL_RISK_ICONS[overallRisk]}
@@ -105,11 +108,15 @@ export function WeatherTimeline({
 						Route Weather
 					</Text>
 				</View>
-				{totalDistanceKm !== undefined && totalDurationMinutes !== undefined && (
-					<Text style={[styles.headerMeta, { color: colors.mutedForeground }]}>
-						{Math.round(totalDistanceKm)} km • {formatDuration(totalDurationMinutes)}
-					</Text>
-				)}
+				{totalDistanceKm !== undefined &&
+					totalDurationMinutes !== undefined && (
+						<Text
+							style={[styles.headerMeta, { color: colors.mutedForeground }]}
+						>
+							{Math.round(totalDistanceKm)} km •{" "}
+							{formatDuration(totalDurationMinutes)}
+						</Text>
+					)}
 			</Animated.View>
 
 			{/* Overall risk message */}
@@ -120,7 +127,9 @@ export function WeatherTimeline({
 					{ backgroundColor: getRiskColor(overallRisk) + "15" },
 				]}
 			>
-				<Text style={[styles.riskMessage, { color: getRiskColor(overallRisk) }]}>
+				<Text
+					style={[styles.riskMessage, { color: getRiskColor(overallRisk) }]}
+				>
 					{OVERALL_RISK_MESSAGES[overallRisk]}
 				</Text>
 			</Animated.View>

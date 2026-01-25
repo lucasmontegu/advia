@@ -1,26 +1,26 @@
 {
-  "name": "@driwet/auth",
-  "type": "module",
-  "exports": {
-    ".": {
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "default": "./src/*.ts"
-    }
-  },
-  "scripts": {},
-  "dependencies": {
-    "@driwet/db": "workspace:*",
-    "@driwet/env": "workspace:*",
-    "@better-auth/expo": "catalog:",
-    "better-auth": "catalog:",
-    "dotenv": "catalog:",
-    "resend": "^4.5.1",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@driwet/config": "workspace:*",
-    "typescript": "catalog:"
-  }
+	"name": "@driwet/auth",
+	"type": "module",
+	"exports": {
+		".": {
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"default": "./src/*.ts"
+		}
+	},
+	"scripts": {},
+	"dependencies": {
+		"@driwet/db": "workspace:*",
+		"@driwet/env": "workspace:*",
+		"@better-auth/expo": "catalog:",
+		"better-auth": "catalog:",
+		"dotenv": "catalog:",
+		"resend": "^4.5.1",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@driwet/config": "workspace:*",
+		"typescript": "catalog:"
+	}
 }

@@ -1,5 +1,7 @@
 // apps/mobile/components/driving-mode/driving-mode-overlay.tsx
-import { Pressable, StyleSheet, Text, View, Dimensions } from "react-native";
+
+import { useEffect } from "react";
+import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
 	FadeIn,
 	FadeOut,
@@ -13,7 +15,6 @@ import Animated, {
 	withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useEffect } from "react";
 import { Icon, type IconName } from "@/components/icons";
 import type { RoadRisk } from "@/hooks/use-route-weather";
 import { useThemeColors } from "@/hooks/use-theme-colors";
@@ -113,7 +114,9 @@ export function DrivingModeOverlay({
 							</Text>
 						)}
 						{distanceRemaining && (
-							<Text style={[styles.distanceText, { color: colors.mutedForeground }]}>
+							<Text
+								style={[styles.distanceText, { color: colors.mutedForeground }]}
+							>
 								{distanceRemaining}
 							</Text>
 						)}
@@ -132,12 +135,9 @@ export function DrivingModeOverlay({
 
 			{/* Large voice button - bottom center */}
 			<View style={styles.bottomArea}>
-				<LargeVoiceButton
-					isListening={isListening}
-					onPress={onVoicePress}
-				/>
+				<LargeVoiceButton isListening={isListening} onPress={onVoicePress} />
 				<Text style={[styles.voiceHint, { color: colors.mutedForeground }]}>
-					{isListening ? "Listening..." : "Tap or say \"Hey Driwet\""}
+					{isListening ? "Listening..." : 'Tap or say "Hey Driwet"'}
 				</Text>
 			</View>
 		</Animated.View>
@@ -277,14 +277,12 @@ function LargeVoiceButton({
 					},
 					buttonStyle,
 				]}
-				accessibilityLabel={isListening ? "Stop listening" : "Start voice command"}
+				accessibilityLabel={
+					isListening ? "Stop listening" : "Start voice command"
+				}
 				accessibilityRole="button"
 			>
-				<Icon
-					name="voice"
-					size={40}
-					color="#fff"
-				/>
+				<Icon name="voice" size={40} color="#fff" />
 			</AnimatedPressable>
 		</View>
 	);

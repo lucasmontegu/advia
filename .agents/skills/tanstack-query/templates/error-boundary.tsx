@@ -1,19 +1,20 @@
 // src/components/ErrorBoundary.tsx
-import { Component, type ReactNode } from 'react'
-import { QueryErrorResetBoundary } from '@tanstack/react-query'
+
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { Component, type ReactNode } from "react";
 
 /**
  * Props and State types
  */
 type ErrorBoundaryProps = {
-  children: ReactNode
-  fallback?: (error: Error, reset: () => void) => ReactNode
-}
+	children: ReactNode;
+	fallback?: (error: Error, reset: () => void) => ReactNode;
+};
 
 type ErrorBoundaryState = {
-  hasError: boolean
-  error: Error | null
-}
+	hasError: boolean;
+	error: Error | null;
+};
 
 /**
  * React Error Boundary Class Component
@@ -21,81 +22,81 @@ type ErrorBoundaryState = {
  * Required because error boundaries must be class components
  */
 class ErrorBoundaryClass extends Component<
-  ErrorBoundaryProps & { onReset?: () => void },
-  ErrorBoundaryState
+	ErrorBoundaryProps & { onReset?: () => void },
+	ErrorBoundaryState
 > {
-  constructor(props: ErrorBoundaryProps & { onReset?: () => void }) {
-    super(props)
-    this.state = { hasError: false, error: null }
-  }
+	constructor(props: ErrorBoundaryProps & { onReset?: () => void }) {
+		super(props);
+		this.state = { hasError: false, error: null };
+	}
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error }
-  }
+	static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+		return { hasError: true, error };
+	}
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log error to error reporting service
-    console.error('Error caught by boundary:', error, errorInfo)
+	componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+		// Log error to error reporting service
+		console.error("Error caught by boundary:", error, errorInfo);
 
-    // Example: Send to Sentry, LogRocket, etc.
-    // Sentry.captureException(error, { contexts: { react: errorInfo } })
-  }
+		// Example: Send to Sentry, LogRocket, etc.
+		// Sentry.captureException(error, { contexts: { react: errorInfo } })
+	}
 
-  handleReset = () => {
-    // Call TanStack Query reset if provided
-    this.props.onReset?.()
+	handleReset = () => {
+		// Call TanStack Query reset if provided
+		this.props.onReset?.();
 
-    // Reset error boundary state
-    this.setState({ hasError: false, error: null })
-  }
+		// Reset error boundary state
+		this.setState({ hasError: false, error: null });
+	};
 
-  render() {
-    if (this.state.hasError && this.state.error) {
-      // Use custom fallback if provided
-      if (this.props.fallback) {
-        return this.props.fallback(this.state.error, this.handleReset)
-      }
+	render() {
+		if (this.state.hasError && this.state.error) {
+			// Use custom fallback if provided
+			if (this.props.fallback) {
+				return this.props.fallback(this.state.error, this.handleReset);
+			}
 
-      // Default error UI
-      return (
-        <div
-          style={{
-            padding: '2rem',
-            border: '2px solid #ef4444',
-            borderRadius: '8px',
-            backgroundColor: '#fee',
-          }}
-        >
-          <h2>Something went wrong</h2>
-          <details style={{ whiteSpace: 'pre-wrap', marginTop: '1rem' }}>
-            <summary>Error details</summary>
-            {this.state.error.message}
-            {this.state.error.stack && (
-              <pre style={{ marginTop: '1rem', fontSize: '0.875rem' }}>
-                {this.state.error.stack}
-              </pre>
-            )}
-          </details>
-          <button
-            onClick={this.handleReset}
-            style={{
-              marginTop: '1rem',
-              padding: '0.5rem 1rem',
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            }}
-          >
-            Try again
-          </button>
-        </div>
-      )
-    }
+			// Default error UI
+			return (
+				<div
+					style={{
+						padding: "2rem",
+						border: "2px solid #ef4444",
+						borderRadius: "8px",
+						backgroundColor: "#fee",
+					}}
+				>
+					<h2>Something went wrong</h2>
+					<details style={{ whiteSpace: "pre-wrap", marginTop: "1rem" }}>
+						<summary>Error details</summary>
+						{this.state.error.message}
+						{this.state.error.stack && (
+							<pre style={{ marginTop: "1rem", fontSize: "0.875rem" }}>
+								{this.state.error.stack}
+							</pre>
+						)}
+					</details>
+					<button
+						onClick={this.handleReset}
+						style={{
+							marginTop: "1rem",
+							padding: "0.5rem 1rem",
+							backgroundColor: "#3b82f6",
+							color: "white",
+							border: "none",
+							borderRadius: "4px",
+							cursor: "pointer",
+						}}
+					>
+						Try again
+					</button>
+				</div>
+			);
+		}
 
-    return this.props.children
-  }
+		return this.props.children;
+	}
 }
 
 /**
@@ -105,15 +106,15 @@ class ErrorBoundaryClass extends Component<
  * with throwOnError: true
  */
 export function ErrorBoundary({ children, fallback }: ErrorBoundaryProps) {
-  return (
-    <QueryErrorResetBoundary>
-      {({ reset }) => (
-        <ErrorBoundaryClass onReset={reset} fallback={fallback}>
-          {children}
-        </ErrorBoundaryClass>
-      )}
-    </QueryErrorResetBoundary>
-  )
+	return (
+		<QueryErrorResetBoundary>
+			{({ reset }) => (
+				<ErrorBoundaryClass onReset={reset} fallback={fallback}>
+					{children}
+				</ErrorBoundaryClass>
+			)}
+		</QueryErrorResetBoundary>
+	);
 }
 
 /**
@@ -122,38 +123,38 @@ export function ErrorBoundary({ children, fallback }: ErrorBoundaryProps) {
 
 // Example 1: Wrap entire app
 export function AppWithErrorBoundary() {
-  return (
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-  )
+	return (
+		<ErrorBoundary>
+			<App />
+		</ErrorBoundary>
+	);
 }
 
 // Example 2: Wrap specific features
 export function UserProfileWithErrorBoundary() {
-  return (
-    <ErrorBoundary>
-      <UserProfile />
-    </ErrorBoundary>
-  )
+	return (
+		<ErrorBoundary>
+			<UserProfile />
+		</ErrorBoundary>
+	);
 }
 
 // Example 3: Custom error UI
 export function CustomErrorBoundary({ children }: { children: ReactNode }) {
-  return (
-    <ErrorBoundary
-      fallback={(error, reset) => (
-        <div className="error-container">
-          <h1>Oops!</h1>
-          <p>We encountered an error: {error.message}</p>
-          <button onClick={reset}>Retry</button>
-          <a href="/">Go Home</a>
-        </div>
-      )}
-    >
-      {children}
-    </ErrorBoundary>
-  )
+	return (
+		<ErrorBoundary
+			fallback={(error, reset) => (
+				<div className="error-container">
+					<h1>Oops!</h1>
+					<p>We encountered an error: {error.message}</p>
+					<button onClick={reset}>Retry</button>
+					<a href="/">Go Home</a>
+				</div>
+			)}
+		>
+			{children}
+		</ErrorBoundary>
+	);
 }
 
 /**
@@ -161,40 +162,40 @@ export function CustomErrorBoundary({ children }: { children: ReactNode }) {
  *
  * Queries can throw errors to error boundaries
  */
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from "@tanstack/react-query";
 
 // Example 1: Always throw errors
 function UserData({ id }: { id: number }) {
-  const { data } = useQuery({
-    queryKey: ['user', id],
-    queryFn: async () => {
-      const response = await fetch(`/api/users/${id}`)
-      if (!response.ok) throw new Error('User not found')
-      return response.json()
-    },
-    throwOnError: true, // Throw to error boundary
-  })
+	const { data } = useQuery({
+		queryKey: ["user", id],
+		queryFn: async () => {
+			const response = await fetch(`/api/users/${id}`);
+			if (!response.ok) throw new Error("User not found");
+			return response.json();
+		},
+		throwOnError: true, // Throw to error boundary
+	});
 
-  return <div>{data.name}</div>
+	return <div>{data.name}</div>;
 }
 
 // Example 2: Conditional throwing (only server errors)
 function ConditionalErrorThrowing({ id }: { id: number }) {
-  const { data } = useQuery({
-    queryKey: ['user', id],
-    queryFn: async () => {
-      const response = await fetch(`/api/users/${id}`)
-      if (!response.ok) throw new Error(`HTTP ${response.status}`)
-      return response.json()
-    },
-    throwOnError: (error) => {
-      // Only throw 5xx server errors to boundary
-      // Handle 4xx client errors locally
-      return error.message.includes('5')
-    },
-  })
+	const { data } = useQuery({
+		queryKey: ["user", id],
+		queryFn: async () => {
+			const response = await fetch(`/api/users/${id}`);
+			if (!response.ok) throw new Error(`HTTP ${response.status}`);
+			return response.json();
+		},
+		throwOnError: (error) => {
+			// Only throw 5xx server errors to boundary
+			// Handle 4xx client errors locally
+			return error.message.includes("5");
+		},
+	});
 
-  return <div>{data?.name ?? 'Not found'}</div>
+	return <div>{data?.name ?? "Not found"}</div>;
 }
 
 /**
@@ -203,24 +204,24 @@ function ConditionalErrorThrowing({ id }: { id: number }) {
  * Place boundaries at different levels for granular error handling
  */
 export function LayeredErrorBoundaries() {
-  return (
-    // App-level boundary
-    <ErrorBoundary fallback={(error) => <AppCrashScreen error={error} />}>
-      <Header />
+	return (
+		// App-level boundary
+		<ErrorBoundary fallback={(error) => <AppCrashScreen error={error} />}>
+			<Header />
 
-      {/* Feature-level boundary */}
-      <ErrorBoundary fallback={(error) => <FeatureError error={error} />}>
-        <UserProfile />
-      </ErrorBoundary>
+			{/* Feature-level boundary */}
+			<ErrorBoundary fallback={(error) => <FeatureError error={error} />}>
+				<UserProfile />
+			</ErrorBoundary>
 
-      {/* Another feature boundary */}
-      <ErrorBoundary>
-        <TodoList />
-      </ErrorBoundary>
+			{/* Another feature boundary */}
+			<ErrorBoundary>
+				<TodoList />
+			</ErrorBoundary>
 
-      <Footer />
-    </ErrorBoundary>
-  )
+			<Footer />
+		</ErrorBoundary>
+	);
 }
 
 /**

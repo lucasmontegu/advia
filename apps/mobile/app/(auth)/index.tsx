@@ -8,9 +8,9 @@ import { useThemeColors } from "@/hooks/use-theme-colors";
 
 export default function AuthIndex() {
 	const colors = useThemeColors();
-	const [redirectTo, setRedirectTo] = useState<
-		"onboarding" | "welcome" | null
-	>(null);
+	const [redirectTo, setRedirectTo] = useState<"onboarding" | "welcome" | null>(
+		null,
+	);
 	const hasChecked = useRef(false);
 
 	useEffect(() => {

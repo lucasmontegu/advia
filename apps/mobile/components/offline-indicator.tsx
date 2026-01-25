@@ -96,10 +96,7 @@ export function OfflineDataIndicator({
 		: "some time ago";
 
 	return (
-		<Animated.View
-			entering={FadeIn.duration(200)}
-			style={styles.dataIndicator}
-		>
+		<Animated.View entering={FadeIn.duration(200)} style={styles.dataIndicator}>
 			<Icon name="clock" size={12} color="#a1a1aa" />
 			<Text style={styles.dataIndicatorText}>
 				Using cached {dataLabels[dataType]} from {formattedTime}

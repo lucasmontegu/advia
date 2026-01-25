@@ -3,8 +3,8 @@ import { auth } from "@driwet/auth";
 import { headers } from "next/headers";
 
 export interface SessionResult {
-  session: Awaited<ReturnType<typeof auth.api.getSession>>;
-  isMobile: boolean;
+	session: Awaited<ReturnType<typeof auth.api.getSession>>;
+	isMobile: boolean;
 }
 
 /**
@@ -15,25 +15,25 @@ export interface SessionResult {
  * we need to pass them as a cookie header, not a Bearer token.
  */
 export async function getSessionFromRequest(
-  mobileToken: string | null
+	mobileToken: string | null,
 ): Promise<SessionResult> {
-  let session;
-  const isMobile = !!mobileToken;
+	let session;
+	const isMobile = !!mobileToken;
 
-  if (mobileToken) {
-    // Validate the session token from mobile app
-    // Better Auth expects the token as a cookie, not a Bearer token
-    session = await auth.api.getSession({
-      headers: new Headers({
-        cookie: `better-auth.session_token=${mobileToken}`,
-      }),
-    });
-  } else {
-    // Fall back to cookie-based session for web
-    session = await auth.api.getSession({
-      headers: await headers(),
-    });
-  }
+	if (mobileToken) {
+		// Validate the session token from mobile app
+		// Better Auth expects the token as a cookie, not a Bearer token
+		session = await auth.api.getSession({
+			headers: new Headers({
+				cookie: `better-auth.session_token=${mobileToken}`,
+			}),
+		});
+	} else {
+		// Fall back to cookie-based session for web
+		session = await auth.api.getSession({
+			headers: await headers(),
+		});
+	}
 
-  return { session, isMobile };
+	return { session, isMobile };
 }

@@ -125,10 +125,7 @@ interface DefaultErrorFallbackProps {
 
 function DefaultErrorFallback({ error, onRetry }: DefaultErrorFallbackProps) {
 	return (
-		<Animated.View
-			entering={FadeIn.duration(300)}
-			style={styles.container}
-		>
+		<Animated.View entering={FadeIn.duration(300)} style={styles.container}>
 			<View style={styles.iconContainer}>
 				<Text style={styles.icon}>!</Text>
 			</View>
@@ -226,9 +223,7 @@ export function WeatherErrorBoundary({ children }: { children: ReactNode }) {
 			componentName="Weather"
 			fallback={
 				<View style={styles.weatherErrorContainer}>
-					<Text style={styles.weatherErrorText}>
-						Weather data unavailable
-					</Text>
+					<Text style={styles.weatherErrorText}>Weather data unavailable</Text>
 				</View>
 			}
 		>

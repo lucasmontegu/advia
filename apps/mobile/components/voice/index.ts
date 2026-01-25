@@ -1,2 +1,2 @@
 // apps/mobile/components/voice/index.ts
-export { RecordingIndicator } from './recording-indicator';
+export { RecordingIndicator } from "./recording-indicator";

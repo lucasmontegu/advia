@@ -12,22 +12,22 @@
 const { withXcodeProject } = require("expo/config-plugins");
 
 const withDisableSandboxing = (config) => {
-  return withXcodeProject(config, async (config) => {
-    const xcodeProject = config.modResults;
+	return withXcodeProject(config, async (config) => {
+		const xcodeProject = config.modResults;
 
-    // Get all build configurations
-    const buildConfigurations = xcodeProject.pbxXCBuildConfigurationSection();
+		// Get all build configurations
+		const buildConfigurations = xcodeProject.pbxXCBuildConfigurationSection();
 
-    // Disable sandboxing for all configurations
-    for (const key in buildConfigurations) {
-      const buildConfig = buildConfigurations[key];
-      if (buildConfig.buildSettings) {
-        buildConfig.buildSettings.ENABLE_USER_SCRIPT_SANDBOXING = "NO";
-      }
-    }
+		// Disable sandboxing for all configurations
+		for (const key in buildConfigurations) {
+			const buildConfig = buildConfigurations[key];
+			if (buildConfig.buildSettings) {
+				buildConfig.buildSettings.ENABLE_USER_SCRIPT_SANDBOXING = "NO";
+			}
+		}
 
-    return config;
-  });
+		return config;
+	});
 };
 
 module.exports = withDisableSandboxing;

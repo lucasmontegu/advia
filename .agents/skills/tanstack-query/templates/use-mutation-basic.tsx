@@ -1,66 +1,66 @@
 // src/hooks/useTodoMutations.ts
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import type { Todo } from './useTodos'
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { Todo } from "./useTodos";
 
 /**
  * Input types for mutations
  */
 type AddTodoInput = {
-  title: string
-  completed?: boolean
-}
+	title: string;
+	completed?: boolean;
+};
 
 type UpdateTodoInput = {
-  id: number
-  title?: string
-  completed?: boolean
-}
+	id: number;
+	title?: string;
+	completed?: boolean;
+};
 
 /**
  * API functions
  */
 async function addTodo(newTodo: AddTodoInput): Promise<Todo> {
-  const response = await fetch('https://jsonplaceholder.typicode.com/todos', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ...newTodo, userId: 1 }),
-  })
+	const response = await fetch("https://jsonplaceholder.typicode.com/todos", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ ...newTodo, userId: 1 }),
+	});
 
-  if (!response.ok) {
-    throw new Error(`Failed to add todo: ${response.statusText}`)
-  }
+	if (!response.ok) {
+		throw new Error(`Failed to add todo: ${response.statusText}`);
+	}
 
-  return response.json()
+	return response.json();
 }
 
 async function updateTodo({ id, ...updates }: UpdateTodoInput): Promise<Todo> {
-  const response = await fetch(
-    `https://jsonplaceholder.typicode.com/todos/${id}`,
-    {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates),
-    }
-  )
+	const response = await fetch(
+		`https://jsonplaceholder.typicode.com/todos/${id}`,
+		{
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(updates),
+		},
+	);
 
-  if (!response.ok) {
-    throw new Error(`Failed to update todo: ${response.statusText}`)
-  }
+	if (!response.ok) {
+		throw new Error(`Failed to update todo: ${response.statusText}`);
+	}
 
-  return response.json()
+	return response.json();
 }
 
 async function deleteTodo(id: number): Promise<void> {
-  const response = await fetch(
-    `https://jsonplaceholder.typicode.com/todos/${id}`,
-    {
-      method: 'DELETE',
-    }
-  )
+	const response = await fetch(
+		`https://jsonplaceholder.typicode.com/todos/${id}`,
+		{
+			method: "DELETE",
+		},
+	);
 
-  if (!response.ok) {
-    throw new Error(`Failed to delete todo: ${response.statusText}`)
-  }
+	if (!response.ok) {
+		throw new Error(`Failed to delete todo: ${response.statusText}`);
+	}
 }
 
 /**
@@ -71,28 +71,28 @@ async function deleteTodo(id: number): Promise<void> {
  * mutate({ title: 'New todo' })
  */
 export function useAddTodo() {
-  const queryClient = useQueryClient()
+	const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: addTodo,
+	return useMutation({
+		mutationFn: addTodo,
 
-    // Runs on successful mutation
-    onSuccess: () => {
-      // Invalidate todos query to trigger refetch
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-    },
+		// Runs on successful mutation
+		onSuccess: () => {
+			// Invalidate todos query to trigger refetch
+			queryClient.invalidateQueries({ queryKey: ["todos"] });
+		},
 
-    // Runs on error
-    onError: (error) => {
-      console.error('Failed to add todo:', error)
-      // Add user notification here (toast, alert, etc.)
-    },
+		// Runs on error
+		onError: (error) => {
+			console.error("Failed to add todo:", error);
+			// Add user notification here (toast, alert, etc.)
+		},
 
-    // Runs regardless of success or error
-    onSettled: () => {
-      console.log('Add todo mutation completed')
-    },
-  })
+		// Runs regardless of success or error
+		onSettled: () => {
+			console.log("Add todo mutation completed");
+		},
+	});
 }
 
 /**
@@ -103,19 +103,19 @@ export function useAddTodo() {
  * mutate({ id: 1, completed: true })
  */
 export function useUpdateTodo() {
-  const queryClient = useQueryClient()
+	const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: updateTodo,
+	return useMutation({
+		mutationFn: updateTodo,
 
-    onSuccess: (updatedTodo) => {
-      // Update specific todo in cache
-      queryClient.setQueryData<Todo>(['todos', updatedTodo.id], updatedTodo)
+		onSuccess: (updatedTodo) => {
+			// Update specific todo in cache
+			queryClient.setQueryData<Todo>(["todos", updatedTodo.id], updatedTodo);
 
-      // Invalidate list to refetch
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-    },
-  })
+			// Invalidate list to refetch
+			queryClient.invalidateQueries({ queryKey: ["todos"] });
+		},
+	});
 }
 
 /**
@@ -126,61 +126,61 @@ export function useUpdateTodo() {
  * mutate(todoId)
  */
 export function useDeleteTodo() {
-  const queryClient = useQueryClient()
+	const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: deleteTodo,
+	return useMutation({
+		mutationFn: deleteTodo,
 
-    onSuccess: (_, deletedId) => {
-      // Remove from list cache
-      queryClient.setQueryData<Todo[]>(['todos'], (old = []) =>
-        old.filter((todo) => todo.id !== deletedId)
-      )
+		onSuccess: (_, deletedId) => {
+			// Remove from list cache
+			queryClient.setQueryData<Todo[]>(["todos"], (old = []) =>
+				old.filter((todo) => todo.id !== deletedId),
+			);
 
-      // Remove individual todo cache
-      queryClient.removeQueries({ queryKey: ['todos', deletedId] })
-    },
-  })
+			// Remove individual todo cache
+			queryClient.removeQueries({ queryKey: ["todos", deletedId] });
+		},
+	});
 }
 
 /**
  * Component usage example:
  */
 export function AddTodoForm() {
-  const { mutate, isPending, isError, error } = useAddTodo()
+	const { mutate, isPending, isError, error } = useAddTodo();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.currentTarget)
-    const title = formData.get('title') as string
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		const formData = new FormData(e.currentTarget);
+		const title = formData.get("title") as string;
 
-    mutate(
-      { title },
-      {
-        // Optional per-mutation callbacks
-        onSuccess: () => {
-          e.currentTarget.reset()
-          console.log('Todo added successfully!')
-        },
-      }
-    )
-  }
+		mutate(
+			{ title },
+			{
+				// Optional per-mutation callbacks
+				onSuccess: () => {
+					e.currentTarget.reset();
+					console.log("Todo added successfully!");
+				},
+			},
+		);
+	};
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="title"
-        placeholder="New todo..."
-        required
-        disabled={isPending}
-      />
-      <button type="submit" disabled={isPending}>
-        {isPending ? 'Adding...' : 'Add Todo'}
-      </button>
-      {isError && <div>Error: {error.message}</div>}
-    </form>
-  )
+	return (
+		<form onSubmit={handleSubmit}>
+			<input
+				type="text"
+				name="title"
+				placeholder="New todo..."
+				required
+				disabled={isPending}
+			/>
+			<button type="submit" disabled={isPending}>
+				{isPending ? "Adding..." : "Add Todo"}
+			</button>
+			{isError && <div>Error: {error.message}</div>}
+		</form>
+	);
 }
 
 /**

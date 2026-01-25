@@ -212,10 +212,7 @@ export const Analytics = {
 	},
 
 	// ============ Voice Events ============
-	voiceInputUsed: (
-		durationSeconds: number,
-		transcriptionSuccess: boolean,
-	) => {
+	voiceInputUsed: (durationSeconds: number, transcriptionSuccess: boolean) => {
 		trackEvent(EVENTS.VOICE_INPUT_USED, {
 			duration_seconds: durationSeconds,
 			transcription_success: transcriptionSuccess,
@@ -294,7 +291,11 @@ export const Analytics = {
 	},
 
 	// ============ Errors ============
-	errorOccurred: (error: string, context: string, severity?: "low" | "medium" | "high") => {
+	errorOccurred: (
+		error: string,
+		context: string,
+		severity?: "low" | "medium" | "high",
+	) => {
 		trackEvent("error_occurred", {
 			error,
 			context,

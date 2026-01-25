@@ -89,7 +89,11 @@ export function AlertMessageCard({
 						{ backgroundColor: severityStyle.border + "20" },
 					]}
 				>
-					<Icon name={severityStyle.icon} size={18} color={severityStyle.border} />
+					<Icon
+						name={severityStyle.icon}
+						size={18}
+						color={severityStyle.border}
+					/>
 				</View>
 				<View style={styles.headerText}>
 					<Text style={[styles.title, { color: severityStyle.text }]}>
@@ -112,7 +116,9 @@ export function AlertMessageCard({
 			{alert.location && (
 				<View style={styles.locationRow}>
 					<Icon name="location" size={12} color={colors.mutedForeground} />
-					<Text style={[styles.locationText, { color: colors.mutedForeground }]}>
+					<Text
+						style={[styles.locationText, { color: colors.mutedForeground }]}
+					>
 						{alert.location}
 					</Text>
 				</View>

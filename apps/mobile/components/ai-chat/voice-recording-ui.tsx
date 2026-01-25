@@ -51,17 +51,11 @@ export function VoiceRecordingUI({
 	};
 
 	if (state === "idle") {
-		return (
-			<IdleState
-				onStartRecording={onStartRecording}
-			/>
-		);
+		return <IdleState onStartRecording={onStartRecording} />;
 	}
 
 	if (state === "processing") {
-		return (
-			<ProcessingState />
-		);
+		return <ProcessingState />;
 	}
 
 	// Recording state
@@ -188,9 +182,7 @@ function RecordingIndicator() {
 		opacity: opacity.value,
 	}));
 
-	return (
-		<Animated.View style={[styles.recordingDot, animatedStyle]} />
-	);
+	return <Animated.View style={[styles.recordingDot, animatedStyle]} />;
 }
 
 function WaveformVisualizer({
@@ -370,7 +362,9 @@ export function VoiceButton({
 					},
 					buttonStyle,
 				]}
-				accessibilityLabel={isRecording ? "Stop recording" : "Start voice input"}
+				accessibilityLabel={
+					isRecording ? "Stop recording" : "Start voice input"
+				}
 				accessibilityRole="button"
 			>
 				<Icon

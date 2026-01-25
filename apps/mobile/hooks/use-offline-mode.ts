@@ -17,7 +17,7 @@ const CACHE_KEYS = {
 const CACHE_TTL = {
 	ROUTES: 7 * 24 * 60 * 60 * 1000, // 7 days
 	WEATHER: 30 * 60 * 1000, // 30 minutes
-	USER_PREFERENCES: Infinity, // Never expires
+	USER_PREFERENCES: Number.POSITIVE_INFINITY, // Never expires
 	LAST_LOCATION: 24 * 60 * 60 * 1000, // 24 hours
 } as const;
 
@@ -70,7 +70,10 @@ interface UseOfflineModeReturn {
 	cacheWeather: (weather: CachedWeather) => Promise<void>;
 	getCachedWeather: (lat: number, lng: number) => Promise<CachedWeather | null>;
 	cacheLocation: (lat: number, lng: number) => Promise<void>;
-	getLastLocation: () => Promise<{ latitude: number; longitude: number } | null>;
+	getLastLocation: () => Promise<{
+		latitude: number;
+		longitude: number;
+	} | null>;
 	// Cache management
 	clearCache: () => Promise<void>;
 	getCacheSize: () => Promise<{ routes: number; weather: number }>;
@@ -128,7 +131,9 @@ export function useOfflineMode(): UseOfflineModeReturn {
 	const cacheRoute = useCallback(async (route: CachedRoute): Promise<void> => {
 		try {
 			const cached = await AsyncStorage.getItem(CACHE_KEYS.ROUTES);
-			const routes: CacheEntry<CachedRoute>[] = cached ? JSON.parse(cached) : [];
+			const routes: CacheEntry<CachedRoute>[] = cached
+				? JSON.parse(cached)
+				: [];
 
 			// Remove existing route with same ID
 			const filtered = routes.filter((r) => r.data.id !== route.id);

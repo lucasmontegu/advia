@@ -1,23 +1,20 @@
 // apps/mobile/components/route/index.ts
 
 export {
-	WeatherSegmentCard,
-	WeatherSegmentDetail,
-	type WeatherCondition,
-	type WeatherSegmentData,
-} from "./weather-segment-card";
-
-export { WeatherTimeline } from "./weather-timeline";
-
-export {
 	AISafetySummary,
-	type SafetyAlert,
 	type SafeStopSuggestion,
+	type SafetyAlert,
 } from "./ai-safety-summary";
-
 export {
-	SafeStopCard,
-	SafeStopListItem,
 	type SafeStopAmenity,
+	SafeStopCard,
 	type SafeStopData,
+	SafeStopListItem,
 } from "./safe-stop-card";
+export {
+	type WeatherCondition,
+	WeatherSegmentCard,
+	type WeatherSegmentData,
+	WeatherSegmentDetail,
+} from "./weather-segment-card";
+export { WeatherTimeline } from "./weather-timeline";

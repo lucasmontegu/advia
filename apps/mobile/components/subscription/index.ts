@@ -1,3 +1,4 @@
 // apps/mobile/components/subscription/index.ts
-export { TrialBanner } from './trial-banner';
-export { PaywallModal } from './paywall-modal';
+
+export { PaywallModal } from "./paywall-modal";
+export { TrialBanner } from "./trial-banner";

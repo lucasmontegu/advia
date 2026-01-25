@@ -1,43 +1,43 @@
 {
-  "cli": {
-    "version": ">= 16.28.0",
-    "appVersionSource": "remote"
-  },
-  "build": {
-    "base": {
-      "env": {
-        "RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "@MAPBOX_DOWNLOAD_TOKEN"
-      },
-      "cache": {
-        "key": "v2-2026-01-22"
-      }
-    },
-    "development": {
-      "extends": "base",
-      "developmentClient": true,
-      "distribution": "internal",
-      "ios": {
-        "simulator": true
-      }
-    },
-    "development:device": {
-      "extends": "base",
-      "developmentClient": true,
-      "distribution": "internal",
-      "ios": {
-        "simulator": false
-      }
-    },
-    "preview": {
-      "extends": "base",
-      "distribution": "internal"
-    },
-    "production": {
-      "extends": "base",
-      "autoIncrement": true
-    }
-  },
-  "submit": {
-    "production": {}
-  }
+	"cli": {
+		"version": ">= 16.28.0",
+		"appVersionSource": "remote"
+	},
+	"build": {
+		"base": {
+			"env": {
+				"RNMAPBOX_MAPS_DOWNLOAD_TOKEN": "@MAPBOX_DOWNLOAD_TOKEN"
+			},
+			"cache": {
+				"key": "v2-2026-01-22"
+			}
+		},
+		"development": {
+			"extends": "base",
+			"developmentClient": true,
+			"distribution": "internal",
+			"ios": {
+				"simulator": true
+			}
+		},
+		"development:device": {
+			"extends": "base",
+			"developmentClient": true,
+			"distribution": "internal",
+			"ios": {
+				"simulator": false
+			}
+		},
+		"preview": {
+			"extends": "base",
+			"distribution": "internal"
+		},
+		"production": {
+			"extends": "base",
+			"autoIncrement": true
+		}
+	},
+	"submit": {
+		"production": {}
+	}
 }

@@ -94,7 +94,10 @@ export function AISafetySummary({
 			style={[styles.container, { backgroundColor: colors.card }]}
 		>
 			{/* Header */}
-			<Animated.View entering={FadeInUp.delay(50).duration(300)} style={styles.header}>
+			<Animated.View
+				entering={FadeInUp.delay(50).duration(300)}
+				style={styles.header}
+			>
 				<View style={styles.headerLeft}>
 					<View
 						style={[
@@ -145,7 +148,9 @@ export function AISafetySummary({
 					entering={FadeInUp.delay(150).duration(300)}
 					style={styles.section}
 				>
-					<Text style={[styles.sectionTitle, { color: colors.mutedForeground }]}>
+					<Text
+						style={[styles.sectionTitle, { color: colors.mutedForeground }]}
+					>
 						Alerts on Route
 					</Text>
 					<View style={styles.alertsList}>
@@ -167,7 +172,9 @@ export function AISafetySummary({
 					entering={FadeInUp.delay(200).duration(300)}
 					style={styles.section}
 				>
-					<Text style={[styles.sectionTitle, { color: colors.mutedForeground }]}>
+					<Text
+						style={[styles.sectionTitle, { color: colors.mutedForeground }]}
+					>
 						Recommended Stops
 					</Text>
 					<View style={styles.suggestionsList}>
@@ -334,7 +341,10 @@ function SuggestionItem({
 								style={[styles.amenityBadge, { backgroundColor: colors.muted }]}
 							>
 								<Text
-									style={[styles.amenityText, { color: colors.mutedForeground }]}
+									style={[
+										styles.amenityText,
+										{ color: colors.mutedForeground },
+									]}
 								>
 									{amenity}
 								</Text>
