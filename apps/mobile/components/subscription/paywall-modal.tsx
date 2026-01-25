@@ -1,12 +1,15 @@
 // apps/mobile/components/subscription/paywall-modal.tsx
 // Simplified paywall that uses RevenueCat's native UI
-import { useEffect } from 'react';
-import { useSubscriptionCheckout, useIsPremium } from '@/hooks/use-subscription';
+import { useEffect, useRef } from "react";
+import {
+	useIsPremium,
+	useSubscriptionCheckout,
+} from "@/hooks/use-subscription";
 
 type PaywallModalProps = {
-  visible: boolean;
-  onDismiss?: () => void;
-  allowDismiss?: boolean;
+	visible: boolean;
+	onDismiss?: () => void;
+	allowDismiss?: boolean;
 };
 
 /**
@@ -21,38 +24,48 @@ type PaywallModalProps = {
  * - App Store compliance
  */
 export function PaywallModal({
-  visible,
-  onDismiss,
-  allowDismiss = true,
+	visible,
+	onDismiss,
+	allowDismiss = true,
 }: PaywallModalProps) {
-  const { checkout, isLoading } = useSubscriptionCheckout();
-  const { isSubscribed } = useIsPremium();
+	const { checkout, isLoading } = useSubscriptionCheckout();
+	const { isSubscribed } = useIsPremium();
+	// Track if we've already presented the paywall for this visibility cycle
+	const hasPresented = useRef(false);
 
-  // Auto-dismiss when subscription becomes active
-  useEffect(() => {
-    if (isSubscribed && visible) {
-      onDismiss?.();
-    }
-  }, [isSubscribed, visible, onDismiss]);
+	// Reset presented state when visibility changes to false
+	useEffect(() => {
+		if (!visible) {
+			hasPresented.current = false;
+		}
+	}, [visible]);
 
-  // Present RevenueCat paywall when modal becomes visible
-  useEffect(() => {
-    if (!visible || isLoading) return;
+	// Auto-dismiss when subscription becomes active
+	useEffect(() => {
+		if (isSubscribed && visible) {
+			onDismiss?.();
+		}
+	}, [isSubscribed, visible, onDismiss]);
 
-    const presentPaywall = async () => {
-      const success = await checkout();
+	// Present RevenueCat paywall when modal becomes visible
+	useEffect(() => {
+		if (!visible || isLoading || hasPresented.current) return;
 
-      // Always call onDismiss after paywall closes
-      // (user either subscribed, cancelled, or closed)
-      if (allowDismiss || success) {
-        onDismiss?.();
-      }
-    };
+		const presentPaywall = async () => {
+			hasPresented.current = true;
+			const success = await checkout();
 
-    presentPaywall();
-  }, [visible, checkout, onDismiss, allowDismiss, isLoading]);
+			// Always call onDismiss after paywall closes
+			// (user either subscribed, cancelled, or closed)
+			if (allowDismiss || success) {
+				onDismiss?.();
+			}
+		};
 
-  // This component doesn't render anything visible
-  // RevenueCat presents its own native modal UI
-  return null;
+		presentPaywall();
+	}, [visible, checkout, onDismiss, allowDismiss, isLoading]);
+
+	// This component doesn't render anything visible
+	// RevenueCat presents its own native modal UI
+	return null;
 }

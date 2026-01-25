@@ -17,13 +17,13 @@ import { Icon } from "@/components/icons";
 import { MapViewComponent } from "@/components/map-view";
 import {
 	AISafetySummary,
-	type SafeStopSuggestion,
-	type SafetyAlert,
 	SafeStopCard,
 	type SafeStopData,
-	WeatherTimeline,
+	type SafeStopSuggestion,
+	type SafetyAlert,
 	type WeatherCondition,
 	type WeatherSegmentData,
+	WeatherTimeline,
 } from "@/components/route";
 import { RouteRiskBadge } from "@/components/route-risk-badge";
 import { useDeleteRoute, useRecordTrip, useSavedRoute } from "@/hooks/use-api";
@@ -98,7 +98,8 @@ export default function RouteDetailScreen() {
 		if (!analyzeWeather.data?.segments) return [];
 
 		const dangerousSegments = analyzeWeather.data.segments.filter(
-			(seg) => seg.weather.roadRisk === "high" || seg.weather.roadRisk === "extreme",
+			(seg) =>
+				seg.weather.roadRisk === "high" || seg.weather.roadRisk === "extreme",
 		);
 
 		if (dangerousSegments.length === 0) return [];
@@ -128,7 +129,8 @@ export default function RouteDetailScreen() {
 		}
 
 		const dangerousSegments = analyzeWeather.data.segments.filter(
-			(seg) => seg.weather.roadRisk === "high" || seg.weather.roadRisk === "extreme",
+			(seg) =>
+				seg.weather.roadRisk === "high" || seg.weather.roadRisk === "extreme",
 		);
 
 		if (dangerousSegments.length === 0) return null;
@@ -552,16 +554,30 @@ export default function RouteDetailScreen() {
 							padding: 16,
 						}}
 					>
-						<Text
+						<View
 							style={{
-								fontFamily: "NunitoSans_600SemiBold",
-								fontSize: 14,
-								color: colors.foreground,
+								flexDirection: "row",
+								justifyContent: "space-between",
+								alignItems: "center",
 								marginBottom: 12,
 							}}
 						>
-							{t("routes.navigateWith")}
-						</Text>
+							<Text
+								style={{
+									fontFamily: "NunitoSans_600SemiBold",
+									fontSize: 14,
+									color: colors.foreground,
+								}}
+							>
+								{t("routes.navigateWith")}
+							</Text>
+							<Pressable
+								onPress={() => setShowNavigationOptions(false)}
+								hitSlop={8}
+							>
+								<Icon name="close" size={20} color={colors.mutedForeground} />
+							</Pressable>
+						</View>
 						<View style={{ flexDirection: "row", gap: 12 }}>
 							<Pressable
 								onPress={() => openNavigation("waze")}
