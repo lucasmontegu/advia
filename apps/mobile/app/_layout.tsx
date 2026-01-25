@@ -4,7 +4,9 @@ import {
 	Inter_100Thin,
 	Inter_300Light,
 	Inter_400Regular,
+	Inter_500Medium,
 	Inter_600SemiBold,
+	Inter_700Bold,
 } from "@expo-google-fonts/inter";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { useFonts } from "expo-font";
@@ -49,9 +51,11 @@ function StackLayout() {
 export default function Layout() {
 	const [loaded, error] = useFonts({
 		Inter_100Thin,
-		Inter_400Regular,
 		Inter_300Light,
+		Inter_400Regular,
+		Inter_500Medium,
 		Inter_600SemiBold,
+		Inter_700Bold,
 	});
 
 	useEffect(() => {
