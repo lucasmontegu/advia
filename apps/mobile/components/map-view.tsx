@@ -221,7 +221,7 @@ export function MapViewComponent({
 							tileUrlTemplates={[radarTileUrl]}
 							tileSize={256}
 							minZoomLevel={1}
-							maxZoomLevel={12}
+							maxZoomLevel={10}
 						>
 							<Mapbox.RasterLayer
 								id="rainviewer-layer"
